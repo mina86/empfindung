@@ -7,20 +7,16 @@
 //! ## Example:
 //!
 //! ```
-//! extern crate empfindung;
-//! extern crate lab;
-//!
 //! use empfindung::DE2000;
-//! use lab::Lab;
 //!
 //! fn main() {
-//!     let color_1 = Lab {
+//!     let color_1 = lab::Lab {
 //!         l: 38.972,
 //!         a: 58.991,
 //!         b: 37.138,
 //!     };
 //!
-//!     let color_2 = Lab {
+//!     let color_2 = lab::Lab {
 //!         l: 54.528,
 //!         a: 42.416,
 //!         b: 54.497,
@@ -28,13 +24,9 @@
 //!
 //!     let delta_e = DE2000::new(color_1, color_2);
 //!     println!("The color difference is: {}", delta_e);
+//!     assert_eq!(20.553642, delta_e);
 //! }
 //! ```
-
-extern crate lab;
-
-use std::f32;
-use lab::Lab;
 
 mod de2000;
 
