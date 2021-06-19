@@ -8,10 +8,10 @@ impl DE2000 {
     /// ### Example
     ///
     /// ```
-    /// extern crate delta_e;
+    /// extern crate empfindung;
     /// extern crate lab;
     ///
-    /// use delta_e::DE2000;
+    /// use empfindung::DE2000;
     /// use lab::Lab;
     ///
     /// fn main() {
@@ -93,9 +93,9 @@ impl DE2000 {
     /// ### Example
     ///
     /// ```
-    /// extern crate delta_e;
+    /// extern crate empfindung;
     ///
-    /// use delta_e::DE2000;
+    /// use empfindung::DE2000;
     ///
     /// fn main() {
     ///     let color_1 = [234, 76, 76];

@@ -1,11 +1,12 @@
 [package]
-name = "delta_e"
-description = "DeltaE is a pure-Rust implementation of the CIEDE2000 algorithm"
+name = "empfindung"
+description = "Empfindung is a pure-Rust implementation of the CIEDE2000 colour difference"
 version = "0.2.1"
-authors = ["Elliot Jackson <elliotekj@gmail.com>"]
-documentation = "https://docs.rs/delta_e"
-homepage = "https://github.com/elliotekj/DeltaE"
-repository = "https://github.com/elliotekj/DeltaE"
+authors = ["Elliot Jackson <elliotekj@gmail.com>",
+           "Michal Nazarewicz <mina86@mina86.com>"]
+documentation = "https://docs.rs/empfindung"
+homepage = "https://github.com/mina86/empfindung"
+repository = "https://github.com/mina86/empfindung"
 readme = "README.md"
 keywords = ["delta", "CIE", "quantify", "color", "difference"]
 categories = ["algorithms", "multimedia::images"]

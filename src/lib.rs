@@ -1,16 +1,16 @@
-//! # DeltaE
+//! # Empfindung
 //!
-//! DeltaE is a pure-Rust implementation of the [CIEDE2000
+//! Empfindung is a pure-Rust implementation of the [CIEDE2000
 //! algorithm](http://en.wikipedia.org/wiki/Color_difference#CIEDE2000) which
 //! serves to quantify the difference between two colors.
 //!
 //! ## Example:
 //!
 //! ```
-//! extern crate delta_e;
+//! extern crate empfindung;
 //! extern crate lab;
 //!
-//! use delta_e::DE2000;
+//! use empfindung::DE2000;
 //! use lab::Lab;
 //!
 //! fn main() {

@@ -1,10 +1,10 @@
-# DeltaE - Quantify color differences in Rust
+# Empfindung - Quantify color differences in Rust
 
-[![Crates.io](https://meritbadge.herokuapp.com/delta_e)](https://crates.io/crates/delta_e)
-[![Docs](https://docs.rs/delta_e/badge.svg)](https://docs.rs/delta_e)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/elliotekj/DeltaE/blob/master/LICENSE)
+[![Crates.io](https://meritbadge.herokuapp.com/empfindung)](https://crates.io/crates/empfindung)
+[![Docs](https://docs.rs/empfindung/badge.svg)](https://docs.rs/empfindung)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/mina86/empfindung/blob/master/LICENSE)
 
-DeltaE is a pure-Rust implementation of the [CIEDE2000
+Empfindung is a pure-Rust implementation of the [CIEDE2000
 algorithm](http://en.wikipedia.org/wiki/Color_difference#CIEDE2000) which serves
 to quantify the difference between two colors. It is entirely based on the work
 of [Zachary Schuessler](http://zaclee.net/), who has written a [Javascript
@@ -17,43 +17,44 @@ If you're using Cargo, just add DeltaE to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-delta_e = "0.2"
+empfindung = "0.2"
 ```
 
 ## Example
 
 ```rust
-extern crate delta_e;
+extern crate empfindung;
 extern crate lab;
 
-use delta_e::DE2000;
-use lab::Lab;
+use empfindung::DE2000;
 
 fn main() {
-    let color_1 = Lab {
+    let color_1 = lab::Lab {
         l: 38.972,
         a: 58.991,
         b: 37.138,
     };
 
-    let color_2 = Lab {
+    let color_2 = lab::Lab {
         l: 54.528,
         a: 42.416,
         b: 54.497,
     };
 
-    let delta_e = DE2000::new(color_1, color_2);
-    println!("The color difference is: {}", delta_e);
+    let empfindung = DE2000::new(color_1, color_2);
+    println!("The color difference is: {}", empfindung);
 }
 ```
 
-## License
-
-DeltaE is released under the MIT [`LICENSE`](/elliotekj/DeltaE/blob/master/LICENSE).
-
 ## About
 
-This crate was written by [Elliot Jackson](https://elliotekj.com).
+This crate was originally written by [Elliot
+Jackson](https://elliotekj.com) and later forked by [Michał
+Nazarewicz](https://mina86.com) after long inactivity.  Aside from the
+package name change, it is a drop-in replacement for the `delta_e`
+create.
 
-- Blog: [https://elliotekj.com](https://elliotekj.com)
-- Email: elliot@elliotekj.com
+## License
+
+Empfindung is released under the MIT license, See [`LICENSE`
+file](https://github.com/mina86/empfindung/blob/master/LICENSE).
