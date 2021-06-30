@@ -14,4 +14,4 @@ license       = "MIT"
 edition       = "2018"
 
 [dependencies]
-lab = "0.7"
+lab = ">=0.4, <1.0"

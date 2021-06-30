@@ -47,7 +47,7 @@ pub fn diff(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
 ///
 ///     let delta_e = de2000::diff_rgb(&color_1, &color_2);
 ///     println!("The color difference is: {}", delta_e);
-///     assert_eq!(58.90494, delta_e);
+///     assert_eq!(58.901638, delta_e);
 /// }
 /// ```
 pub fn diff_rgb(color_1: &[u8; 3], color_2: &[u8; 3]) -> f32 {
@@ -169,7 +169,7 @@ pub fn diff_with_params(
 ///     let delta_e = de2000::diff_rgb_with_params(
 ///         &color_1, &color_2, de2000::KSubParams::yang2012());
 ///     println!("The color difference is: {}", delta_e);
-///     assert_eq!(26.880775, delta_e);
+///     assert_eq!(26.883245, delta_e);
 /// }
 /// ```
 pub fn diff_rgb_with_params(
@@ -236,7 +236,7 @@ impl DE2000 {
     ///
     ///     let delta_e = DE2000::from_rgb(&color_1, &color_2);
     ///     println!("The color difference is: {}", delta_e);
-    ///     assert_eq!(58.90494, delta_e);
+    ///     assert_eq!(58.901638, delta_e);
     /// }
     /// ```
     #[deprecated(note = "Use de2000::diff_rgb() instead")]
