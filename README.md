@@ -1,6 +1,6 @@
 # Empfindung - Quantify color differences in Rust
 
-[![Crates.io](https://meritbadge.herokuapp.com/empfindung)](https://crates.io/crates/empfindung)
+[![crates.io](https://img.shields.io/crates/v/empfindung)](https://crates.io/crates/empfindung)
 [![Docs](https://docs.rs/empfindung/badge.svg)](https://docs.rs/empfindung)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/mina86/empfindung/blob/master/LICENSE)
 
