@@ -29,10 +29,83 @@ use std::f32::consts::{PI, TAU};
 /// }
 /// ```
 pub fn diff(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
-    let ksub_l = 1.0;
-    let ksub_c = 1.0;
-    let ksub_h = 1.0;
+    diff_with_params(color_1, color_2, KSubParams::default())
+}
 
+/// Returns the difference between two sRGB colors.
+///
+/// ### Example
+///
+/// ```
+/// extern crate empfindung;
+///
+/// use empfindung::de2000;
+///
+/// fn main() {
+///     let color_1 = [234, 76, 76];
+///     let color_2 = [76, 187, 234];
+///
+///     let delta_e = de2000::diff_rgb(&color_1, &color_2);
+///     println!("The color difference is: {}", delta_e);
+///     assert_eq!(58.90494, delta_e);
+/// }
+/// ```
+pub fn diff_rgb(color_1: &[u8; 3], color_2: &[u8; 3]) -> f32 {
+    diff(lab::Lab::from_rgb(color_1), lab::Lab::from_rgb(color_2))
+}
+
+/// `k` parameters adjusting what effect lightness, hue and chroma difference
+/// will have on the difference.
+///
+/// By default the values equal one.  The larger the value, the smaller impact
+/// each component will have.  Note that setting any of those values to zero
+/// will make the difference infinite (which is unlikely to be a desired
+/// result).
+///
+/// See ‘Color Image Quality Assessment Based on CIEDE2000’ by Yang Yang, Jun
+/// Ming and Nenghai Yu <https://www.hindawi.com/journals/am/2012/273723/>.
+#[derive(Clone, Copy, PartialEq, PartialOrd, Debug)]
+pub struct KSubParams {
+    pub l: f32,
+    pub c: f32,
+    pub h: f32,
+}
+
+/// Returns the difference between two `Lab` colours using custom `k`.
+/// parameters.
+///
+/// ### Example
+///
+/// ```
+/// extern crate empfindung;
+/// extern crate lab;
+///
+/// use empfindung::de2000;
+///
+/// fn main() {
+///     let color_1 = lab::Lab {
+///         l: 38.972,
+///         a: 58.991,
+///         b: 37.138,
+///     };
+///
+///     let color_2 = lab::Lab {
+///         l: 54.528,
+///         a: 42.416,
+///         b: 54.497,
+///     };
+///
+///     let delta_e = de2000::diff_with_params(
+///         color_1, color_2, de2000::KSubParams::yang2012());
+///     println!("The color difference is: {}", delta_e);
+///     assert_eq!(23.524858, delta_e);
+/// }
+/// ```
+pub fn diff_with_params(
+    color_1: lab::Lab,
+    color_2: lab::Lab,
+    ksub: KSubParams,
+) -> f32 {
     let l_bar = (color_1.l + color_2.l) * 0.5;
     let delta_l = color_2.l - color_1.l;
 
@@ -71,16 +144,16 @@ pub fn diff(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
 
     let s_sub_upcase_h = 1.0 + 0.015 * c_prime_bar * upcase_t;
 
-    let lightness = delta_l / (ksub_l * s_sub_l);
-    let chroma = delta_c_prime / (ksub_c * s_sub_c);
-    let hue = delta_upcase_h_prime / (ksub_h * s_sub_upcase_h);
+    let lightness = delta_l / (ksub.l * s_sub_l);
+    let chroma = delta_c_prime / (ksub.c * s_sub_c);
+    let hue = delta_upcase_h_prime / (ksub.h * s_sub_upcase_h);
     let r_sub_t = get_r_sub_t(c_prime_bar, upcase_h_prime_bar);
 
     (lightness.powi(2) + chroma.powi(2) + hue.powi(2) + r_sub_t * chroma * hue)
         .sqrt()
 }
 
-/// Returns the difference between two sRGB colors.
+/// Returns the difference between two sRGB colours using custom `k`.
 ///
 /// ### Example
 ///
@@ -93,13 +166,22 @@ pub fn diff(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
 ///     let color_1 = [234, 76, 76];
 ///     let color_2 = [76, 187, 234];
 ///
-///     let delta_e = de2000::diff_rgb(&color_1, &color_2);
+///     let delta_e = de2000::diff_rgb_with_params(
+///         &color_1, &color_2, de2000::KSubParams::yang2012());
 ///     println!("The color difference is: {}", delta_e);
-///     assert_eq!(58.90494, delta_e);
+///     assert_eq!(26.880775, delta_e);
 /// }
 /// ```
-pub fn diff_rgb(color_1: &[u8; 3], color_2: &[u8; 3]) -> f32 {
-    diff(lab::Lab::from_rgb(color_1), lab::Lab::from_rgb(color_2))
+pub fn diff_rgb_with_params(
+    color_1: &[u8; 3],
+    color_2: &[u8; 3],
+    ksub: KSubParams,
+) -> f32 {
+    diff_with_params(
+        lab::Lab::from_rgb(color_1),
+        lab::Lab::from_rgb(color_2),
+        ksub,
+    )
 }
 
 
@@ -136,7 +218,7 @@ impl DE2000 {
     /// ```
     #[deprecated(note = "Use de2000::diff() instead")]
     pub fn new(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
-        diff(color_1, color_2)
+        diff_with_params(color_1, color_2, KSubParams::default())
     }
 
     /// Returns the difference between two RGB colors.
@@ -160,6 +242,36 @@ impl DE2000 {
     #[deprecated(note = "Use de2000::diff_rgb() instead")]
     pub fn from_rgb(color_1: &[u8; 3], color_2: &[u8; 3]) -> f32 {
         diff_rgb(color_1, color_2)
+    }
+}
+
+impl Default for KSubParams {
+    fn default() -> Self {
+        Self {
+            l: 1.0,
+            c: 1.0,
+            h: 1.0,
+        }
+    }
+}
+
+impl KSubParams {
+    /// Returns parameters as determined in (Yang, 2012).
+    ///
+    /// See Yang Yang, Jun Ming, Nenghai Yu, "Color Image Quality Assessment
+    /// Based on CIEDE2000", Advances in Multimedia, vol. 2012, Article ID
+    /// 273723, 6 pages, 2012. https://doi.org/10.1155/2012/273723
+    ///
+    /// Note that inclusion of this function does not imply endorsement of those
+    /// values.  Colorimetry is hard and it’s up to the user to determine
+    /// correct values to use.  This function is here just for reference.  If in
+    /// doubt use `KSubParams::default()` which is what [`DE2000::new`] uses.
+    pub fn yang2012() -> Self {
+        Self {
+            l: 0.65,
+            c: 1.0,
+            h: 4.0,
+        }
     }
 }
 
@@ -280,12 +392,36 @@ mod tests {
     }
 
     #[test]
+    fn test_symmetric_with_params() {
+        let ksub = super::KSubParams::yang2012();
+        for (_, lab1, lab2) in TESTS.iter() {
+            let color_1 = from_tripple(*lab1);
+            let color_2 = from_tripple(*lab2);
+            assert_eq!(
+                super::diff_with_params(color_1, color_2, ksub),
+                super::diff_with_params(color_2, color_1, ksub)
+            );
+        }
+    }
+
+    #[test]
     fn test_zero() {
         for (_, lab1, lab2) in TESTS.iter() {
             let color_1 = from_tripple(*lab1);
             let color_2 = from_tripple(*lab2);
             assert_eq!(0.0, super::diff(color_1, color_1));
             assert_eq!(0.0, super::diff(color_2, color_2));
+        }
+    }
+
+    #[test]
+    fn test_zero_with_params() {
+        let ksub = super::KSubParams::yang2012();
+        for (_, lab1, lab2) in TESTS.iter() {
+            let color_1 = from_tripple(*lab1);
+            let color_2 = from_tripple(*lab2);
+            assert_eq!(0.0, super::diff_with_params(color_1, color_1, ksub));
+            assert_eq!(0.0, super::diff_with_params(color_2, color_2, ksub));
         }
     }
 }
