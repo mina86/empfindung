@@ -1,3 +1,5 @@
+use std::f32::consts::{PI, TAU};
+
 pub struct DE2000;
 
 fn diff(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
@@ -30,11 +32,11 @@ fn diff(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
     let h_prime_2 = get_h_prime(color_2.b, a_prime_2);
     let delta_h_prime = get_delta_h_prime(c1, c2, h_prime_1, h_prime_2);
 
-    let delta_upcase_h_prime = 2.0 *
-        (c_prime_1 * c_prime_2).sqrt() *
-        (rad_from_deg(delta_h_prime) * 0.5).sin();
-    let upcase_h_prime_bar = if (h_prime_1 - h_prime_2).abs() > 180.0 {
-        (h_prime_1 + h_prime_2 + 360.0) * 0.5
+    let delta_upcase_h_prime =
+        2.0 * (c_prime_1 * c_prime_2).sqrt() * (0.5 * delta_h_prime).sin();
+
+    let upcase_h_prime_bar = if (h_prime_1 - h_prime_2).abs() > PI {
+        (h_prime_1 + h_prime_2) * 0.5 + PI
     } else {
         (h_prime_1 + h_prime_2) * 0.5
     };
@@ -100,7 +102,7 @@ impl DE2000 {
     ///
     ///     let delta_e = DE2000::from_rgb(&color_1, &color_2);
     ///     println!("The color difference is: {}", delta_e);
-    ///     assert_eq!(58.90496, delta_e);
+    ///     assert_eq!(58.90494, delta_e);
     /// }
     /// ```
     pub fn from_rgb(color_1: &[u8; 3], color_2: &[u8; 3]) -> f32 {
@@ -112,48 +114,44 @@ fn get_h_prime(x: f32, y: f32) -> f32 {
     if x == 0.0 && y == 0.0 {
         return 0.0;
     }
-
-    let mut hue_angle = deg_from_rad(x.atan2(y));
-    if hue_angle < 0.0 {
-        hue_angle += 360.0;
+    let rad = x.atan2(y);
+    if rad < 0.0 {
+        rad + TAU
+    } else {
+        rad
     }
-
-    hue_angle
 }
 
 fn get_delta_h_prime(c1: f32, c2: f32, h_prime_1: f32, h_prime_2: f32) -> f32 {
     if 0.0 == c1 || 0.0 == c2 {
-        0.0
-    } else if (h_prime_1 - h_prime_2).abs() <= 180.0 {
-        h_prime_2 - h_prime_1
+        return 0.0;
+    }
+    let diff = h_prime_2 - h_prime_1;
+    if diff.abs() <= PI {
+        diff
     } else if h_prime_2 <= h_prime_1 {
-        h_prime_2 - h_prime_1 + 360.0
+        diff + TAU
     } else {
-        h_prime_2 - h_prime_1 - 360.0
+        diff - TAU
     }
 }
 
 fn get_upcase_t(upcase_h_prime_bar: f32) -> f32 {
-    1.0 - 0.17 * (rad_from_deg(upcase_h_prime_bar - 30.0)).cos() +
-        0.24 * (rad_from_deg(2.0 * upcase_h_prime_bar)).cos() +
-        0.32 * (rad_from_deg(3.0 * upcase_h_prime_bar + 6.0)).cos() -
-        0.20 * (rad_from_deg(4.0 * upcase_h_prime_bar - 63.0)).cos()
+    const THIRTY_DEG_IN_RAD: f32 = TAU / 12.0;
+    const SIX_DEG_IN_RAD: f32 = TAU / 60.0;
+    const SIXTY_THREE_DEG_IN_RAD: f32 = TAU * 0.175;
+
+    1.0 - 0.17 * (upcase_h_prime_bar - THIRTY_DEG_IN_RAD).cos() +
+        0.24 * (2.0 * upcase_h_prime_bar).cos() +
+        0.32 * (3.0 * upcase_h_prime_bar + SIX_DEG_IN_RAD).cos() -
+        0.20 * (4.0 * upcase_h_prime_bar - SIXTY_THREE_DEG_IN_RAD).cos()
 }
 
 fn get_r_sub_t(c_prime_bar: f32, upcase_h_prime_bar: f32) -> f32 {
     let c7 = c_prime_bar.powi(7);
+    let h = upcase_h_prime_bar * (14.4 / TAU) - 11.0;
     -2.0 * (c7 / (c7 + 25f32.powi(7))).sqrt() *
-        ((-((upcase_h_prime_bar - 275.0) / 25.0).powi(2)).exp() *
-            (std::f32::consts::TAU / 6.0))
-            .sin()
-}
-
-fn deg_from_rad(radians: f32) -> f32 {
-    radians * (360.0 / std::f32::consts::TAU)
-}
-
-fn rad_from_deg(degrees: f32) -> f32 {
-    degrees * (std::f32::consts::TAU / 360.0)
+        ((-h.powi(2)).exp() * (TAU / 6.0)).sin()
 }
 
 #[cfg(test)]
