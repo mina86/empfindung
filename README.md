@@ -26,7 +26,7 @@ empfindung = "0.2"
 extern crate empfindung;
 extern crate lab;
 
-use empfindung::DE2000;
+use empfindung::de2000;
 
 fn main() {
     let color_1 = lab::Lab {
@@ -41,7 +41,7 @@ fn main() {
         b: 54.497,
     };
 
-    let empfindung = DE2000::new(color_1, color_2);
+    let empfindung = de2000::diff(color_1, color_2);
     println!("The color difference is: {}", empfindung);
 }
 ```
