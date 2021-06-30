@@ -52,7 +52,8 @@ This crate was originally written by [Elliot
 Jackson](https://elliotekj.com) and later forked by [Michał
 Nazarewicz](https://mina86.com) after long inactivity.  Aside from the
 package name change, it is a drop-in replacement for the `delta_e`
-create.
+create.  When migrating to `empfindung` it’s easiest to replace
+`delta_e::*` paths by `empfindung::de2000::*` paths.
 
 ## License
 

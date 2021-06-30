@@ -1,8 +1,34 @@
 use std::f32::consts::{PI, TAU};
 
-pub struct DE2000;
-
-fn diff(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
+/// Returns the difference between two `Lab` colors.
+///
+/// ### Example
+///
+/// ```
+/// extern crate empfindung;
+/// extern crate lab;
+///
+/// use empfindung::de2000;
+///
+/// fn main() {
+///     let color_1 = lab::Lab {
+///         l: 38.972,
+///         a: 58.991,
+///         b: 37.138,
+///     };
+///
+///     let color_2 = lab::Lab {
+///         l: 54.528,
+///         a: 42.416,
+///         b: 54.497,
+///     };
+///
+///     let delta_e = de2000::diff(color_1, color_2);
+///     println!("The color difference is: {}", delta_e);
+///     assert_eq!(20.553642, delta_e);
+/// }
+/// ```
+pub fn diff(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
     let ksub_l = 1.0;
     let ksub_c = 1.0;
     let ksub_h = 1.0;
@@ -54,6 +80,31 @@ fn diff(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
         .sqrt()
 }
 
+/// Returns the difference between two sRGB colors.
+///
+/// ### Example
+///
+/// ```
+/// extern crate empfindung;
+///
+/// use empfindung::de2000;
+///
+/// fn main() {
+///     let color_1 = [234, 76, 76];
+///     let color_2 = [76, 187, 234];
+///
+///     let delta_e = de2000::diff_rgb(&color_1, &color_2);
+///     println!("The color difference is: {}", delta_e);
+///     assert_eq!(58.90494, delta_e);
+/// }
+/// ```
+pub fn diff_rgb(color_1: &[u8; 3], color_2: &[u8; 3]) -> f32 {
+    diff(lab::Lab::from_rgb(color_1), lab::Lab::from_rgb(color_2))
+}
+
+
+pub struct DE2000;
+
 impl DE2000 {
     /// Returns the difference between two `Lab` colors.
     ///
@@ -63,7 +114,7 @@ impl DE2000 {
     /// extern crate empfindung;
     /// extern crate lab;
     ///
-    /// use empfindung::DE2000;
+    /// use empfindung::de2000::DE2000;
     ///
     /// fn main() {
     ///     let color_1 = lab::Lab {
@@ -83,6 +134,7 @@ impl DE2000 {
     ///     assert_eq!(20.553642, delta_e);
     /// }
     /// ```
+    #[deprecated(note = "Use de2000::diff() instead")]
     pub fn new(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
         diff(color_1, color_2)
     }
@@ -94,7 +146,7 @@ impl DE2000 {
     /// ```
     /// extern crate empfindung;
     ///
-    /// use empfindung::DE2000;
+    /// use empfindung::de2000::DE2000;
     ///
     /// fn main() {
     ///     let color_1 = [234, 76, 76];
@@ -105,8 +157,9 @@ impl DE2000 {
     ///     assert_eq!(58.90494, delta_e);
     /// }
     /// ```
+    #[deprecated(note = "Use de2000::diff_rgb() instead")]
     pub fn from_rgb(color_1: &[u8; 3], color_2: &[u8; 3]) -> f32 {
-        Self::new(lab::Lab::from_rgb(color_1), lab::Lab::from_rgb(color_2))
+        diff_rgb(color_1, color_2)
     }
 }
 
@@ -171,7 +224,7 @@ mod tests {
     fn assert_delta_e(expected: f32, lab1: Tripple, lab2: Tripple) {
         let color_1 = from_tripple(lab1);
         let color_2 = from_tripple(lab2);
-        assert_eq!(round(super::DE2000::new(color_2, color_1)), expected);
+        assert_eq!(round(super::diff(color_2, color_1)), expected);
     }
 
     // Tests taken from Table 1: "CIEDE2000 total color difference test data" of
@@ -231,8 +284,8 @@ mod tests {
         for (_, lab1, lab2) in TESTS.iter() {
             let color_1 = from_tripple(*lab1);
             let color_2 = from_tripple(*lab2);
-            assert_eq!(0.0, super::DE2000::new(color_1, color_1));
-            assert_eq!(0.0, super::DE2000::new(color_2, color_2));
+            assert_eq!(0.0, super::diff(color_1, color_1));
+            assert_eq!(0.0, super::diff(color_2, color_2));
         }
     }
 }
