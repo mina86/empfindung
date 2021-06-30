@@ -1,14 +1,25 @@
 # Changelog
 
-## 0.2.1 (June 23, 2019)
+## 0.2.2 (2021-07-01)
+
+- Add `de2000::diff` and `de2000::diff_rgb` functions.  They deprecate
+  `new` and `from_rgb` methods defined in `DE2000` structure.
+- Add `de2000::diff_with_params` and `de2000::diff_rgb_with_params`
+  functions as well as `de2000::KSubParams` structure.  They allow
+  adjusting how much lightness, chroma and hue affect the difference
+  calculation.
+- Update `lab` dependency to accept anything above 0.4 (including the
+  latest 0.10).
+
+## delta_e 0.2.1 (2019-06-23)
 
 - Update `lab` from 0.4 to 0.7
 
-## 0.2.0 (June 30, 2017)
+## delta_E 0.2.0 (2017-06-30)
 
 - Add `from_rgb`
 - Add an extensive test suite
 
-## 0.1.0 (May 26, 2017)
+## delta_e 0.1.0 (2017-05-26)
 
 - Initial release
