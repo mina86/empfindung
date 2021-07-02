@@ -133,8 +133,8 @@ pub fn diff_with_params(
     let l_bar = (color_1.l + color_2.l) * 0.5;
     let delta_l = color_2.l - color_1.l;
 
-    let c1 = (color_1.a.powi(2) + color_1.b.powi(2)).sqrt();
-    let c2 = (color_2.a.powi(2) + color_2.b.powi(2)).sqrt();
+    let c1 = hypot(color_1.a, color_1.b);
+    let c2 = hypot(color_2.a, color_2.b);
 
     const TWENTY_FIVE_TO_SEVENTH: f32 = 6103515625f32;
     let tmp = ((c1 + c2) * 0.5).powi(7);
@@ -142,8 +142,8 @@ pub fn diff_with_params(
     let a_prime_1 = color_1.a * tmp;
     let a_prime_2 = color_2.a * tmp;
 
-    let c_prime_1 = a_prime_1.hypot(color_1.b);
-    let c_prime_2 = a_prime_2.hypot(color_2.b);
+    let c_prime_1 = hypot(a_prime_1, color_1.b);
+    let c_prime_2 = hypot(a_prime_2, color_2.b);
     let c_prime_bar = (c_prime_1 + c_prime_2) * 0.5;
     let delta_c_prime = c_prime_2 - c_prime_1;
 
@@ -344,6 +344,10 @@ fn get_r_sub_t(c_prime_bar: f32, upcase_h_prime_bar: f32) -> f32 {
     let h = upcase_h_prime_bar * (14.4 / TAU_64) as f32 - 11.0;
     -2.0 * (c7 / (c7 + TWENTY_FIVE_TO_SEVENTH)).sqrt() *
         ((-h.powi(2)).exp() * (TAU_64 / 6.0) as f32).sin()
+}
+
+fn hypot(x: f32, y: f32) -> f32 {
+    (x*x + y*y).sqrt()
 }
 
 #[cfg(test)]
