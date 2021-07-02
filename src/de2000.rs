@@ -20,7 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-use std::f32::consts::{PI, TAU};
+const TAU_32: f32 = std::f32::consts::TAU;
+const PI_32: f32 = std::f32::consts::PI;
+const TAU_64: f64 = std::f64::consts::TAU;
 
 /// Returns the difference between two `Lab` colors.
 ///
@@ -69,7 +71,7 @@ pub fn diff(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
 ///
 ///     let delta_e = de2000::diff_rgb(&color_1, &color_2);
 ///     println!("The color difference is: {}", delta_e);
-///     assert_eq!(58.901638, delta_e);
+///     assert_eq!(58.90164, delta_e);
 /// }
 /// ```
 pub fn diff_rgb(color_1: &[u8; 3], color_2: &[u8; 3]) -> f32 {
@@ -134,8 +136,9 @@ pub fn diff_with_params(
     let c1 = (color_1.a.powi(2) + color_1.b.powi(2)).sqrt();
     let c2 = (color_2.a.powi(2) + color_2.b.powi(2)).sqrt();
 
+    const TWENTY_FIVE_TO_SEVENTH: f32 = 6103515625f32;
     let tmp = ((c1 + c2) * 0.5).powi(7);
-    let tmp = 1.5 - (tmp / (tmp + 25f32.powi(7))).sqrt() * 0.5;
+    let tmp = 1.5 - (tmp / (tmp + TWENTY_FIVE_TO_SEVENTH)).sqrt() * 0.5;
     let a_prime_1 = color_1.a * tmp;
     let a_prime_2 = color_2.a * tmp;
 
@@ -156,8 +159,8 @@ pub fn diff_with_params(
     let delta_upcase_h_prime =
         2.0 * (c_prime_1 * c_prime_2).sqrt() * (0.5 * delta_h_prime).sin();
 
-    let upcase_h_prime_bar = if (h_prime_1 - h_prime_2).abs() > PI {
-        (h_prime_1 + h_prime_2) * 0.5 + PI
+    let upcase_h_prime_bar = if (h_prime_1 - h_prime_2).abs() > PI_32 {
+        (h_prime_1 + h_prime_2) * 0.5 + PI_32
     } else {
         (h_prime_1 + h_prime_2) * 0.5
     };
@@ -191,7 +194,7 @@ pub fn diff_with_params(
 ///     let delta_e = de2000::diff_rgb_with_params(
 ///         &color_1, &color_2, de2000::KSubParams::yang2012());
 ///     println!("The color difference is: {}", delta_e);
-///     assert_eq!(26.883245, delta_e);
+///     assert_eq!(26.88325, delta_e);
 /// }
 /// ```
 pub fn diff_rgb_with_params(
@@ -258,7 +261,7 @@ impl DE2000 {
     ///
     ///     let delta_e = DE2000::from_rgb(&color_1, &color_2);
     ///     println!("The color difference is: {}", delta_e);
-    ///     assert_eq!(58.901638, delta_e);
+    ///     assert_eq!(58.90164, delta_e);
     /// }
     /// ```
     #[deprecated(note = "Use de2000::diff_rgb() instead")]
@@ -303,7 +306,7 @@ fn get_h_prime(x: f32, y: f32) -> f32 {
     }
     let rad = x.atan2(y);
     if rad < 0.0 {
-        rad + TAU
+        rad + TAU_32
     } else {
         rad
     }
@@ -314,31 +317,33 @@ fn get_delta_h_prime(c1: f32, c2: f32, h_prime_1: f32, h_prime_2: f32) -> f32 {
         return 0.0;
     }
     let diff = h_prime_2 - h_prime_1;
-    if diff.abs() <= PI {
+    if diff.abs() <= PI_32 {
         diff
     } else if h_prime_2 <= h_prime_1 {
-        diff + TAU
+        diff + TAU_32
     } else {
-        diff - TAU
+        diff - TAU_32
     }
 }
 
+#[rustfmt::skip]
 fn get_upcase_t(upcase_h_prime_bar: f32) -> f32 {
-    const THIRTY_DEG_IN_RAD: f32 = TAU / 12.0;
-    const SIX_DEG_IN_RAD: f32 = TAU / 60.0;
-    const SIXTY_THREE_DEG_IN_RAD: f32 = TAU * 0.175;
+    const THIRTY_DEG_IN_RAD: f32 = (TAU_64 / 12.0) as f32;
+    const SIX_DEG_IN_RAD: f32 = (TAU_64 / 60.0) as f32;
+    const SIXTY_THREE_DEG_IN_RAD: f32 = (TAU_64 * 0.175) as f32;
 
-    1.0 - 0.17 * (upcase_h_prime_bar - THIRTY_DEG_IN_RAD).cos() +
-        0.24 * (2.0 * upcase_h_prime_bar).cos() +
-        0.32 * (3.0 * upcase_h_prime_bar + SIX_DEG_IN_RAD).cos() -
-        0.20 * (4.0 * upcase_h_prime_bar - SIXTY_THREE_DEG_IN_RAD).cos()
+    1.0 - 0.17 * (      upcase_h_prime_bar - THIRTY_DEG_IN_RAD     ).cos()
+        + 0.24 * (2.0 * upcase_h_prime_bar                         ).cos()
+        + 0.32 * (3.0 * upcase_h_prime_bar + SIX_DEG_IN_RAD        ).cos()
+        - 0.20 * (4.0 * upcase_h_prime_bar - SIXTY_THREE_DEG_IN_RAD).cos()
 }
 
 fn get_r_sub_t(c_prime_bar: f32, upcase_h_prime_bar: f32) -> f32 {
+    const TWENTY_FIVE_TO_SEVENTH: f32 = 6103515625f32;
     let c7 = c_prime_bar.powi(7);
-    let h = upcase_h_prime_bar * (14.4 / TAU) - 11.0;
-    -2.0 * (c7 / (c7 + 25f32.powi(7))).sqrt() *
-        ((-h.powi(2)).exp() * (TAU / 6.0)).sin()
+    let h = upcase_h_prime_bar * (14.4 / TAU_64) as f32 - 11.0;
+    -2.0 * (c7 / (c7 + TWENTY_FIVE_TO_SEVENTH)).sqrt() *
+        ((-h.powi(2)).exp() * (TAU_64 / 6.0) as f32).sin()
 }
 
 #[cfg(test)]
