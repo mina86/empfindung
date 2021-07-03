@@ -1,5 +1,11 @@
 # Changelog
 
+## Upcoming
+
+- Rename `de2000` module to `cie00`.  The new name better indicates
+  the origin of the metric, i.e. that it was defined by the CIE
+  in 2000.
+
 ## 0.2.2 (2021-07-01)
 
 - Add `de2000::diff` and `de2000::diff_rgb` functions.  They deprecate

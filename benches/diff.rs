@@ -18,7 +18,7 @@ fn generate_colours(count: usize) -> Vec<lab::Lab> {
 
 fn diff_benchmark(c: &mut criterion::Criterion) {
     let colours = generate_colours(1_000);
-    c.bench_function("de2000", |b| {
+    c.bench_function("cie00", |b| {
         // Use iter_custom so that we can swap the loops for the loop over
         // colours to be outer one.  We do this to minimise how memory access
         // time influences the benchmark.  Doing calculation for data in the
@@ -27,7 +27,7 @@ fn diff_benchmark(c: &mut criterion::Criterion) {
             let start = std::time::Instant::now();
             for pair in colours.windows(2) {
                 for _ in 0..reps {
-                    let diff = empfindung::de2000::diff(pair[0], pair[1]);
+                    let diff = empfindung::cie00::diff(pair[0], pair[1]);
                     criterion::black_box(diff);
                 }
             }

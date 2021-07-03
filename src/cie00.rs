@@ -20,9 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const TAU_32: f32 = std::f32::consts::TAU;
-const PI_32: f32 = std::f32::consts::PI;
-const TAU_64: f64 = std::f64::consts::TAU;
+//! Implementation of the CIEDE2000 colour distance algorithm.
+//!
+//! The CIEDE2000 (ΔE₀₀) is a metric which can be parameterised with three
+//! parameters which indicate what effect difference in lightness, chroma and
+//! hue have on the computed distance.  The module provides [`diff`] function
+//! which uses default parameters as well as [`diff_with_params`] which accepts
+//! [`KSubParams`] argument to customise the coefficients.
 
 /// Returns the difference between two `Lab` colors.
 ///
@@ -32,7 +36,7 @@ const TAU_64: f64 = std::f64::consts::TAU;
 /// extern crate empfindung;
 /// extern crate lab;
 ///
-/// use empfindung::de2000;
+/// use empfindung::cie00;
 ///
 /// fn main() {
 ///     let color_1 = lab::Lab {
@@ -47,7 +51,7 @@ const TAU_64: f64 = std::f64::consts::TAU;
 ///         b: 54.497,
 ///     };
 ///
-///     let delta_e = de2000::diff(color_1, color_2);
+///     let delta_e = cie00::diff(color_1, color_2);
 ///     println!("The color difference is: {}", delta_e);
 ///     assert_eq!(20.553642, delta_e);
 /// }
@@ -63,13 +67,13 @@ pub fn diff(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
 /// ```
 /// extern crate empfindung;
 ///
-/// use empfindung::de2000;
+/// use empfindung::cie00;
 ///
 /// fn main() {
 ///     let color_1 = [234, 76, 76];
 ///     let color_2 = [76, 187, 234];
 ///
-///     let delta_e = de2000::diff_rgb(&color_1, &color_2);
+///     let delta_e = cie00::diff_rgb(&color_1, &color_2);
 ///     println!("The color difference is: {}", delta_e);
 ///     assert_eq!(58.90164, delta_e);
 /// }
@@ -104,7 +108,7 @@ pub struct KSubParams {
 /// extern crate empfindung;
 /// extern crate lab;
 ///
-/// use empfindung::de2000;
+/// use empfindung::cie00;
 ///
 /// fn main() {
 ///     let color_1 = lab::Lab {
@@ -119,8 +123,8 @@ pub struct KSubParams {
 ///         b: 54.497,
 ///     };
 ///
-///     let delta_e = de2000::diff_with_params(
-///         color_1, color_2, de2000::KSubParams::yang2012());
+///     let delta_e = cie00::diff_with_params(
+///         color_1, color_2, cie00::KSubParams::yang2012());
 ///     println!("The color difference is: {}", delta_e);
 ///     assert_eq!(23.524858, delta_e);
 /// }
@@ -185,14 +189,14 @@ pub fn diff_with_params(
 /// ```
 /// extern crate empfindung;
 ///
-/// use empfindung::de2000;
+/// use empfindung::cie00;
 ///
 /// fn main() {
 ///     let color_1 = [234, 76, 76];
 ///     let color_2 = [76, 187, 234];
 ///
-///     let delta_e = de2000::diff_rgb_with_params(
-///         &color_1, &color_2, de2000::KSubParams::yang2012());
+///     let delta_e = cie00::diff_rgb_with_params(
+///         &color_1, &color_2, cie00::KSubParams::yang2012());
 ///     println!("The color difference is: {}", delta_e);
 ///     assert_eq!(26.88325, delta_e);
 /// }
@@ -221,7 +225,7 @@ impl DE2000 {
     /// extern crate empfindung;
     /// extern crate lab;
     ///
-    /// use empfindung::de2000::DE2000;
+    /// use empfindung::cie00::DE2000;
     ///
     /// fn main() {
     ///     let color_1 = lab::Lab {
@@ -241,7 +245,7 @@ impl DE2000 {
     ///     assert_eq!(20.553642, delta_e);
     /// }
     /// ```
-    #[deprecated(note = "Use de2000::diff() instead")]
+    #[deprecated(note = "Use cie00::diff() instead")]
     pub fn new(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
         diff_with_params(color_1, color_2, KSubParams::default())
     }
@@ -253,7 +257,7 @@ impl DE2000 {
     /// ```
     /// extern crate empfindung;
     ///
-    /// use empfindung::de2000::DE2000;
+    /// use empfindung::cie00::DE2000;
     ///
     /// fn main() {
     ///     let color_1 = [234, 76, 76];
@@ -264,7 +268,7 @@ impl DE2000 {
     ///     assert_eq!(58.90164, delta_e);
     /// }
     /// ```
-    #[deprecated(note = "Use de2000::diff_rgb() instead")]
+    #[deprecated(note = "Use cie00::diff_rgb() instead")]
     pub fn from_rgb(color_1: &[u8; 3], color_2: &[u8; 3]) -> f32 {
         diff_rgb(color_1, color_2)
     }
@@ -346,9 +350,11 @@ fn get_r_sub_t(c_prime_bar: f32, upcase_h_prime_bar: f32) -> f32 {
         ((-h.powi(2)).exp() * (TAU_64 / 6.0) as f32).sin()
 }
 
-fn hypot(x: f32, y: f32) -> f32 {
-    (x*x + y*y).sqrt()
-}
+fn hypot(x: f32, y: f32) -> f32 { (x * x + y * y).sqrt() }
+
+const TAU_32: f32 = std::f32::consts::TAU;
+const PI_32: f32 = std::f32::consts::PI;
+const TAU_64: f64 = std::f64::consts::TAU;
 
 #[cfg(test)]
 mod tests {

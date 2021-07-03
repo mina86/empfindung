@@ -7,7 +7,7 @@
 //! ## Example:
 //!
 //! ```
-//! use empfindung::de2000;
+//! use empfindung::cie00;
 //!
 //! fn main() {
 //!     let color_1 = lab::Lab {
@@ -22,12 +22,14 @@
 //!         b: 54.497,
 //!     };
 //!
-//!     let delta_e = de2000::diff(color_1, color_2);
+//!     let delta_e = cie00::diff(color_1, color_2);
 //!     println!("The color difference is: {}", delta_e);
 //!     assert_eq!(20.553642, delta_e);
 //! }
 //! ```
 
-pub mod de2000;
+pub mod cie00;
 
-pub use de2000::DE2000;
+#[doc(hidden)]
+pub use cie00 as de2000;
+pub use cie00::DE2000;

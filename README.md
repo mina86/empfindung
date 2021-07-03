@@ -26,7 +26,7 @@ empfindung = "0.2"
 extern crate empfindung;
 extern crate lab;
 
-use empfindung::de2000;
+use empfindung::cie00;
 
 fn main() {
     let color_1 = lab::Lab {
@@ -41,7 +41,7 @@ fn main() {
         b: 54.497,
     };
 
-    let empfindung = de2000::diff(color_1, color_2);
+    let empfindung = cie00::diff(color_1, color_2);
     println!("The color difference is: {}", empfindung);
 }
 ```
@@ -52,8 +52,26 @@ This crate was originally written by [Elliot
 Jackson](https://elliotekj.com) and later forked by [Michał
 Nazarewicz](https://mina86.com) after long inactivity.  Aside from the
 package name change, it is a drop-in replacement for the `delta_e`
-create.  When migrating to `empfindung` it’s easiest to replace
-`delta_e::*` paths by `empfindung::de2000::*` paths.
+create.
+
+Migrating from to `empfindung` can be performed by using `use`
+declaration with an alias:
+
+```rust
+use empfindung as delta_e;
+```
+
+or changing the paths using `delta_e` crate name to use `empfindung`
+instead.  In particular, if `use delta_e::DE2000;` declaration was
+used, it’s enough to change it to the following without having to
+touch the rest of the code:
+
+```rust
+use empfindung::DE2000;  // was use delta_e::DE2000;
+```
+
+Having said that, the `DE2000` structure is now deprecated and it’s
+better to use `empfindung::cie00::diff` directly.
 
 ## License
 
