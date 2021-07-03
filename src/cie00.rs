@@ -289,7 +289,7 @@ impl KSubParams {
     ///
     /// See Yang Yang, Jun Ming, Nenghai Yu, "Color Image Quality Assessment
     /// Based on CIEDE2000", Advances in Multimedia, vol. 2012, Article ID
-    /// 273723, 6 pages, 2012. https://doi.org/10.1155/2012/273723
+    /// 273723, 6 pages, 2012. <https://doi.org/10.1155/2012/273723>.
     ///
     /// Note that inclusion of this function does not imply endorsement of those
     /// values.  Colorimetry is hard and it’s up to the user to determine
