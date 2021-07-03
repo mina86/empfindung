@@ -16,9 +16,14 @@ fn generate_colours(count: usize) -> Vec<lab::Lab> {
     labs
 }
 
-fn diff_benchmark(c: &mut criterion::Criterion) {
-    let colours = generate_colours(1_000);
-    c.bench_function("cie00", |b| {
+
+fn bench_func(
+    c: &mut criterion::Criterion,
+    colours: &[lab::Lab],
+    name: &'static str,
+    diff: impl Fn(lab::Lab, lab::Lab) -> f32,
+) {
+    c.bench_function(name, |b| {
         // Use iter_custom so that we can swap the loops for the loop over
         // colours to be outer one.  We do this to minimise how memory access
         // time influences the benchmark.  Doing calculation for data in the
@@ -27,13 +32,22 @@ fn diff_benchmark(c: &mut criterion::Criterion) {
             let start = std::time::Instant::now();
             for pair in colours.windows(2) {
                 for _ in 0..reps {
-                    let diff = empfindung::cie00::diff(pair[0], pair[1]);
-                    criterion::black_box(diff);
+                    criterion::black_box(diff(pair[0], pair[1]));
                 }
             }
             start.elapsed()
         });
     });
+}
+
+fn diff_benchmark(c: &mut criterion::Criterion) {
+    let ksub94 = empfindung::cie94::KSubParams::graphic();
+    let colours = generate_colours(1_000);
+    bench_func(c, &colours, "cie76", empfindung::cie76::diff);
+    bench_func(c, &colours, "cie94", |a, b| {
+        empfindung::cie94::diff(a, b, ksub94)
+    });
+    bench_func(c, &colours, "cie00", empfindung::cie00::diff);
 }
 
 criterion_group!(benches, diff_benchmark,);

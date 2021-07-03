@@ -1,8 +1,33 @@
+// Colour difference computation implementations.
+// Copyright (c) 2021 Michał Nazarewicz <mina86@mina86.com>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 //! # Empfindung
 //!
-//! Empfindung is a pure-Rust implementation of the [CIEDE2000
-//! algorithm](http://en.wikipedia.org/wiki/Color_difference#CIEDE2000) which
-//! serves to quantify the difference between two colors.
+//! Empfindung is a library providing implementations of colour difference
+//! algorithms.  Specifically, distances based on L\*a\*b\* colour space often
+//! referred to as ΔE*.  (This is also where the package gets its name.  The ‘E’
+//! stands for German ‘Empfindung’).
+//!
+//! The crate provides CIEDE2000 (in [`cie00`] module), CIE94 (in [`cie94`]) and
+//! CIE76 (in [`cie76`] module) implementations.
 //!
 //! ## Example:
 //!
@@ -29,8 +54,17 @@
 //! ```
 
 pub mod cie00;
+pub mod cie76;
+pub mod cie94;
 
 #[doc(hidden)]
 pub use cie00 as de2000;
 #[allow(deprecated)]
 pub use cie00::DE2000;
+
+pub(crate) mod math {
+    pub fn hypot(x: f32, y: f32) -> f32 { (x * x + y * y).sqrt() }
+}
+
+#[cfg(test)]
+pub(crate) mod testutil;

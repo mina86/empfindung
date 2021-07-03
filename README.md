@@ -4,12 +4,12 @@
 [![Docs](https://docs.rs/empfindung/badge.svg)](https://docs.rs/empfindung)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/mina86/empfindung/blob/master/LICENSE)
 
-Empfindung is a pure-Rust implementation of the [CIEDE2000
-algorithm](http://en.wikipedia.org/wiki/Color_difference#CIEDE2000) which serves
-to quantify the difference between two colors. It is entirely based on the work
-of [Zachary Schuessler](http://zaclee.net/), who has written a [Javascript
-implementation](https://github.com/zschuessler/DeltaE/blob/master/src/dE00.js)
-of the algorithm.
+Empfindung is a library providing implementations of colour difference
+algorithms.  Specifically, distances based on L\*a\*b\* colour space
+often referred to as ΔE*.  (This is also where the package gets its
+name.  The ‘E’ stands for German ‘Empfindung’).
+
+The crate provides CIEDE2000, CIE94 and CIE76 implementations.
 
 ## Installation
 

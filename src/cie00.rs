@@ -1,4 +1,4 @@
-// ΔE₀₀ computation library
+// ΔE₀₀ computation implementation.
 // Copyright (c) 2017 Elliot Jackson
 // Copyright (c) 2021 Michał Nazarewicz <mina86@mina86.com>
 //
@@ -28,7 +28,7 @@
 //! which uses default parameters as well as [`diff_with_params`] which accepts
 //! [`KSubParams`] argument to customise the coefficients.
 
-/// Returns the difference between two `Lab` colors.
+/// Returns the CIEDE2000 colour difference between two L\*a\*b\* colours.
 ///
 /// ### Example
 ///
@@ -60,7 +60,7 @@ pub fn diff(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
     diff_with_params(color_1, color_2, KSubParams::default())
 }
 
-/// Returns the difference between two sRGB colors.
+/// Returns the CIEDE2000 colour difference between two sRGB colours.
 ///
 /// ### Example
 ///
@@ -83,15 +83,18 @@ pub fn diff_rgb(color_1: &[u8; 3], color_2: &[u8; 3]) -> f32 {
 }
 
 /// `k` parameters adjusting what effect lightness, hue and chroma difference
-/// will have on the difference.
+/// will have on the calculated distance.
 ///
 /// By default the values equal one.  The larger the value, the smaller impact
 /// each component will have.  Note that setting any of those values to zero
 /// will make the difference infinite (which is unlikely to be a desired
 /// result).
 ///
-/// See ‘Color Image Quality Assessment Based on CIEDE2000’ by Yang Yang, Jun
-/// Ming and Nenghai Yu <https://www.hindawi.com/journals/am/2012/273723/>.
+/// To construct the object, either create it directly by providing your own
+/// choice of parameters, or use [`KSubParams::default`] or
+/// [`KSubParams::yang2012`] methods.  The former returns object with all
+/// parameters equal one while the latter returns parameters as devised by Yang
+/// et al.
 #[derive(Clone, Copy, PartialEq, PartialOrd, Debug)]
 pub struct KSubParams {
     pub l: f32,
@@ -99,8 +102,8 @@ pub struct KSubParams {
     pub h: f32,
 }
 
-/// Returns the difference between two `Lab` colours using custom `k`.
-/// parameters.
+/// Returns the CIEDE2000 colour difference between two L\*a\*b\* colours using
+/// custom `k` parameters.
 ///
 /// ### Example
 ///
@@ -137,8 +140,8 @@ pub fn diff_with_params(
     let l_bar = (color_1.l + color_2.l) * 0.5;
     let delta_l = color_2.l - color_1.l;
 
-    let c1 = hypot(color_1.a, color_1.b);
-    let c2 = hypot(color_2.a, color_2.b);
+    let c1 = super::math::hypot(color_1.a, color_1.b);
+    let c2 = super::math::hypot(color_2.a, color_2.b);
 
     const TWENTY_FIVE_TO_SEVENTH: f32 = 6103515625f32;
     let tmp = ((c1 + c2) * 0.5).powi(7);
@@ -146,8 +149,8 @@ pub fn diff_with_params(
     let a_prime_1 = color_1.a * tmp;
     let a_prime_2 = color_2.a * tmp;
 
-    let c_prime_1 = hypot(a_prime_1, color_1.b);
-    let c_prime_2 = hypot(a_prime_2, color_2.b);
+    let c_prime_1 = super::math::hypot(a_prime_1, color_1.b);
+    let c_prime_2 = super::math::hypot(a_prime_2, color_2.b);
     let c_prime_bar = (c_prime_1 + c_prime_2) * 0.5;
     let delta_c_prime = c_prime_2 - c_prime_1;
 
@@ -182,7 +185,8 @@ pub fn diff_with_params(
         .sqrt()
 }
 
-/// Returns the difference between two sRGB colours using custom `k`.
+/// Returns the CIEDE2000 colour difference between two sRGB colours using
+/// custom `k` parameters.
 ///
 /// ### Example
 ///
@@ -219,7 +223,7 @@ pub struct DE2000;
 
 #[allow(deprecated)]
 impl DE2000 {
-    /// Returns the difference between two `Lab` colors.
+    /// Returns the colour difference between two `Lab` colors.
     ///
     /// ### Example
     ///
@@ -252,7 +256,7 @@ impl DE2000 {
         diff_with_params(color_1, color_2, KSubParams::default())
     }
 
-    /// Returns the difference between two RGB colors.
+    /// Returns the colour difference between two RGB colors.
     ///
     /// ### Example
     ///
@@ -352,30 +356,35 @@ fn get_r_sub_t(c_prime_bar: f32, upcase_h_prime_bar: f32) -> f32 {
         ((-h.powi(2)).exp() * (TAU_64 / 6.0) as f32).sin()
 }
 
-fn hypot(x: f32, y: f32) -> f32 { (x * x + y * y).sqrt() }
-
 const TAU_32: f32 = std::f32::consts::TAU;
 const PI_32: f32 = std::f32::consts::PI;
 const TAU_64: f64 = std::f64::consts::TAU;
 
+
 #[cfg(test)]
 mod tests {
-    type Tripple = (f32, f32, f32);
+    #[test]
+    fn test_zero() { crate::testutil::do_test_zero(|a, b| super::diff(a, b)); }
 
-    fn from_tripple(lab: Tripple) -> lab::Lab {
-        lab::Lab {
-            l: lab.0,
-            a: lab.1,
-            b: lab.2,
-        }
+    #[test]
+    fn test_zero_with_params() {
+        let ksub = super::KSubParams::yang2012();
+        crate::testutil::do_test_zero(|a, b| {
+            super::diff_with_params(a, b, ksub)
+        });
     }
 
-    fn round(val: f32) -> f32 { (val * 10000.0).round() / 10000.0 }
+    #[test]
+    fn test_symmetric() {
+        crate::testutil::do_test_symmetric(|a, b| super::diff(a, b));
+    }
 
-    fn assert_delta_e(expected: f32, lab1: Tripple, lab2: Tripple) {
-        let color_1 = from_tripple(lab1);
-        let color_2 = from_tripple(lab2);
-        assert_eq!(round(super::diff(color_2, color_1)), expected);
+    #[test]
+    fn test_symmetric_with_params() {
+        let ksub = super::KSubParams::yang2012();
+        crate::testutil::do_test_symmetric(|a, b| {
+            super::diff_with_params(a, b, ksub)
+        });
     }
 
     // Tests taken from Table 1: "CIEDE2000 total color difference test data" of
@@ -385,7 +394,7 @@ mod tests {
     //
     // http://www.ece.rochester.edu/~gsharma/papers/CIEDE2000CRNAFeb05.pdf
     #[rustfmt::skip]
-    static TESTS: [(f32, Tripple, Tripple); 34] = [
+    static TESTS: [(f32, (f32, f32, f32), (f32, f32, f32)); 34] = [
         (100.0,   (100.0,     0.0050,  -0.0100), ( 0.0000,   0.0000,   0.0000)),
         ( 2.0425, (50.0000,   2.6772, -79.7751), (50.0000,   0.0000, -82.7485)),
         ( 2.8615, (50.0000,   3.1571, -77.2803), (50.0000,   0.0000, -82.7485)),
@@ -424,43 +433,6 @@ mod tests {
 
     #[test]
     fn test_difference() {
-        for (expected, lab1, lab2) in TESTS.iter() {
-            assert_delta_e(*expected, *lab1, *lab2);
-            assert_delta_e(*expected, *lab2, *lab1);
-        }
-    }
-
-    #[test]
-    fn test_symmetric_with_params() {
-        let ksub = super::KSubParams::yang2012();
-        for (_, lab1, lab2) in TESTS.iter() {
-            let color_1 = from_tripple(*lab1);
-            let color_2 = from_tripple(*lab2);
-            assert_eq!(
-                super::diff_with_params(color_1, color_2, ksub),
-                super::diff_with_params(color_2, color_1, ksub)
-            );
-        }
-    }
-
-    #[test]
-    fn test_zero() {
-        for (_, lab1, lab2) in TESTS.iter() {
-            let color_1 = from_tripple(*lab1);
-            let color_2 = from_tripple(*lab2);
-            assert_eq!(0.0, super::diff(color_1, color_1));
-            assert_eq!(0.0, super::diff(color_2, color_2));
-        }
-    }
-
-    #[test]
-    fn test_zero_with_params() {
-        let ksub = super::KSubParams::yang2012();
-        for (_, lab1, lab2) in TESTS.iter() {
-            let color_1 = from_tripple(*lab1);
-            let color_2 = from_tripple(*lab2);
-            assert_eq!(0.0, super::diff_with_params(color_1, color_1, ksub));
-            assert_eq!(0.0, super::diff_with_params(color_2, color_2, ksub));
-        }
+        crate::testutil::do_test_difference(&TESTS, super::diff);
     }
 }
