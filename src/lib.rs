@@ -26,8 +26,8 @@
 //! referred to as ΔE*.  (This is also where the package gets its name.  The ‘E’
 //! stands for German ‘Empfindung’).
 //!
-//! The crate provides CIEDE2000 (in [`cie00`] module), CIE94 (in [`cie94`]) and
-//! CIE76 (in [`cie76`] module) implementations.
+//! The crate provides CIEDE2000 (in [`cie00`] module), CIE94 (in [`cie94`]),
+//! CIE76 (in [`cie76`] module) and CMC l:c (in [`cmc`] module) implementations.
 //!
 //! ## Example:
 //!
@@ -56,6 +56,7 @@
 pub mod cie00;
 pub mod cie76;
 pub mod cie94;
+pub mod cmc;
 
 #[doc(hidden)]
 pub use cie00 as de2000;

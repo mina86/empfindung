@@ -5,8 +5,8 @@
 - Rename `de2000` module to `cie00`.  The new name better indicates
   the origin of the metric, i.e. that it was defined by the CIE
   in 2000.
-- Add `cie76` and `cie94` modules and thus implementations of CIE76
-  and CIE94 algorithms.
+- Add `cie76`, `cie94` and `cmc` modules and thus implementations of
+  CIE76, CIE94 and CMC l:c algorithms.
 
 ## 0.2.2 (2021-07-01)
 

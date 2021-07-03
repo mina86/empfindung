@@ -48,6 +48,9 @@ fn diff_benchmark(c: &mut criterion::Criterion) {
         empfindung::cie94::diff(a, b, ksub94)
     });
     bench_func(c, &colours, "cie00", empfindung::cie00::diff);
+    bench_func(c, &colours, "cmc", |a, b| {
+        empfindung::cmc::diff(a, b, (1.0, 1.0))
+    });
 }
 
 criterion_group!(benches, diff_benchmark,);

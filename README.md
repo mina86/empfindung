@@ -9,7 +9,7 @@ algorithms.  Specifically, distances based on L\*a\*b\* colour space
 often referred to as ΔE*.  (This is also where the package gets its
 name.  The ‘E’ stands for German ‘Empfindung’).
 
-The crate provides CIEDE2000, CIE94 and CIE76 implementations.
+The crate provides CIEDE2000, CIE94, CIE76 and CMC l:c implementations.
 
 ## Installation
 
