@@ -32,4 +32,5 @@ pub mod cie00;
 
 #[doc(hidden)]
 pub use cie00 as de2000;
+#[allow(deprecated)]
 pub use cie00::DE2000;

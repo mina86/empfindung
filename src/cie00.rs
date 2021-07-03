@@ -214,8 +214,10 @@ pub fn diff_rgb_with_params(
 }
 
 
+#[deprecated(note = "Use cie00::diff() or cie00::diff_rgb() instead")]
 pub struct DE2000;
 
+#[allow(deprecated)]
 impl DE2000 {
     /// Returns the difference between two `Lab` colors.
     ///
@@ -225,7 +227,7 @@ impl DE2000 {
     /// extern crate empfindung;
     /// extern crate lab;
     ///
-    /// use empfindung::cie00::DE2000;
+    /// use empfindung::DE2000;
     ///
     /// fn main() {
     ///     let color_1 = lab::Lab {
@@ -257,7 +259,7 @@ impl DE2000 {
     /// ```
     /// extern crate empfindung;
     ///
-    /// use empfindung::cie00::DE2000;
+    /// use empfindung::DE2000;
     ///
     /// fn main() {
     ///     let color_1 = [234, 76, 76];
@@ -287,14 +289,14 @@ impl Default for KSubParams {
 impl KSubParams {
     /// Returns parameters as determined in (Yang, 2012).
     ///
-    /// See Yang Yang, Jun Ming, Nenghai Yu, "Color Image Quality Assessment
-    /// Based on CIEDE2000", Advances in Multimedia, vol. 2012, Article ID
+    /// See Yang Yang, Jun Ming, Nenghai Yu, ‘Color Image Quality Assessment
+    /// Based on CIEDE2000’, Advances in Multimedia, vol. 2012, Article ID
     /// 273723, 6 pages, 2012. <https://doi.org/10.1155/2012/273723>.
     ///
     /// Note that inclusion of this function does not imply endorsement of those
     /// values.  Colorimetry is hard and it’s up to the user to determine
     /// correct values to use.  This function is here just for reference.  If in
-    /// doubt use `KSubParams::default()` which is what [`DE2000::new`] uses.
+    /// doubt use `KSubParams::default()` which is what [`diff`] function uses.
     pub fn yang2012() -> Self {
         Self {
             l: 0.65,
