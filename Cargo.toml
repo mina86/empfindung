@@ -20,6 +20,7 @@ lab = { version = ">=0.7, <1.0", optional = true }
 criterion = { version = "0.3.3", default-features = false }
 rand = "0.8.0"
 rand_xoshiro = "0.6.0"
+lab = ">=0.7, <1.0"
 
 [features]
 default = ["lab"]
