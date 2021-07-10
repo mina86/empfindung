@@ -53,10 +53,12 @@
 ///     assert_eq!(28.601656, delta_e);
 /// }
 /// ```
-pub fn diff(colour_1: lab::Lab, colour_2: lab::Lab) -> f32 {
-    let dl = colour_1.l - colour_2.l;
-    let da = colour_1.a - colour_2.a;
-    let db = colour_1.b - colour_2.b;
+pub fn diff(colour_1: impl crate::ToLab, colour_2: impl crate::ToLab) -> f32 {
+    let colour_1 = colour_1.to_lab();
+    let colour_2 = colour_2.to_lab();
+    let dl = colour_1.0 - colour_2.0;
+    let da = colour_1.1 - colour_2.1;
+    let db = colour_1.2 - colour_2.2;
     (dl * dl + da * da + db * db).sqrt()
 }
 

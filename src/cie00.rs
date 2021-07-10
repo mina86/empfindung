@@ -56,7 +56,7 @@
 ///     assert_eq!(20.553642, delta_e);
 /// }
 /// ```
-pub fn diff(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
+pub fn diff(color_1: impl crate::ToLab, color_2: impl crate::ToLab) -> f32 {
     diff_with_params(color_1, color_2, KSubParams::default())
 }
 
@@ -133,24 +133,32 @@ pub struct KSubParams {
 /// }
 /// ```
 pub fn diff_with_params(
-    color_1: lab::Lab,
-    color_2: lab::Lab,
+    color_1: impl crate::ToLab,
+    color_2: impl crate::ToLab,
     ksub: KSubParams,
 ) -> f32 {
-    let l_bar = (color_1.l + color_2.l) * 0.5;
-    let delta_l = color_2.l - color_1.l;
+    diff_impl(color_1.to_lab(), color_2.to_lab(), ksub)
+}
 
-    let c1 = super::math::hypot(color_1.a, color_1.b);
-    let c2 = super::math::hypot(color_2.a, color_2.b);
+fn diff_impl(
+    color_1: (f32, f32, f32),
+    color_2: (f32, f32, f32),
+    ksub: KSubParams,
+) -> f32 {
+    let l_bar = (color_1.0 + color_2.0) * 0.5;
+    let delta_l = color_2.0 - color_1.0;
+
+    let c1 = super::math::hypot(color_1.1, color_1.2);
+    let c2 = super::math::hypot(color_2.1, color_2.2);
 
     const TWENTY_FIVE_TO_SEVENTH: f32 = 6103515625f32;
     let tmp = ((c1 + c2) * 0.5).powi(7);
     let tmp = 1.5 - (tmp / (tmp + TWENTY_FIVE_TO_SEVENTH)).sqrt() * 0.5;
-    let a_prime_1 = color_1.a * tmp;
-    let a_prime_2 = color_2.a * tmp;
+    let a_prime_1 = color_1.1 * tmp;
+    let a_prime_2 = color_2.1 * tmp;
 
-    let c_prime_1 = super::math::hypot(a_prime_1, color_1.b);
-    let c_prime_2 = super::math::hypot(a_prime_2, color_2.b);
+    let c_prime_1 = super::math::hypot(a_prime_1, color_1.2);
+    let c_prime_2 = super::math::hypot(a_prime_2, color_2.2);
     let c_prime_bar = (c_prime_1 + c_prime_2) * 0.5;
     let delta_c_prime = c_prime_2 - c_prime_1;
 
@@ -159,8 +167,8 @@ pub fn diff_with_params(
 
     let s_sub_c = 1.0 + 0.045 * c_prime_bar;
 
-    let h_prime_1 = get_h_prime(color_1.b, a_prime_1);
-    let h_prime_2 = get_h_prime(color_2.b, a_prime_2);
+    let h_prime_1 = get_h_prime(color_1.2, a_prime_1);
+    let h_prime_2 = get_h_prime(color_2.2, a_prime_2);
     let delta_h_prime = get_delta_h_prime(c1, c2, h_prime_1, h_prime_2);
 
     let delta_upcase_h_prime =

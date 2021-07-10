@@ -112,12 +112,24 @@ impl KSubParams {
 ///     assert_eq!(19.482761, delta_e);
 /// }
 /// ```
-pub fn diff(reference: lab::Lab, colour: lab::Lab, ksub: KSubParams) -> f32 {
-    let delta_l = reference.l - colour.l;
-    let delta_a = reference.a - colour.a;
-    let delta_b = reference.b - colour.b;
-    let c_1 = super::math::hypot(reference.a, reference.b);
-    let c_2 = super::math::hypot(colour.a, colour.b);
+pub fn diff(
+    reference: impl crate::ToLab,
+    colour: impl crate::ToLab,
+    ksub: KSubParams,
+) -> f32 {
+    diff_impl(reference.to_lab(), colour.to_lab(), ksub)
+}
+
+fn diff_impl(
+    reference: (f32, f32, f32),
+    colour: (f32, f32, f32),
+    ksub: KSubParams,
+) -> f32 {
+    let delta_l = reference.0 - colour.0;
+    let delta_a = reference.1 - colour.1;
+    let delta_b = reference.2 - colour.2;
+    let c_1 = super::math::hypot(reference.1, reference.2);
+    let c_2 = super::math::hypot(colour.1, colour.2);
     let delta_c = c_1 - c_2;
     let delta_h = (delta_a.powi(2) + delta_b.powi(2) - delta_c.powi(2)).sqrt();
 

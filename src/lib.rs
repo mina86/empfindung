@@ -63,6 +63,26 @@ pub use cie00 as de2000;
 #[allow(deprecated)]
 pub use cie00::DE2000;
 
+
+/// Object which can be converted to L\*a\*\b* colour representation.
+pub trait ToLab {
+    /// Returns L\*, a\* and b\* coordinates of a colour.
+    fn to_lab(&self) -> (f32, f32, f32);
+}
+
+impl ToLab for (f32, f32, f32) {
+    fn to_lab(&self) -> (f32, f32, f32) { *self }
+}
+
+impl ToLab for [f32; 3] {
+    fn to_lab(&self) -> (f32, f32, f32) { (self[0], self[1], self[2]) }
+}
+
+impl ToLab for lab::Lab {
+    fn to_lab(&self) -> (f32, f32, f32) { (self.l, self.a, self.b) }
+}
+
+
 pub(crate) mod math {
     pub fn hypot(x: f32, y: f32) -> f32 { (x * x + y * y).sqrt() }
 }

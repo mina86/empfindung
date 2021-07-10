@@ -7,6 +7,9 @@
   in 2000.
 - Add `cie76`, `cie94` and `cmc` modules and thus implementations of
   CIE76, CIE94 and CMC l:c algorithms.
+- Add `ToLab` trait so that the diff functions can be used with
+  arguments other than `lab::Lab`.  Apart from `lab::Lab`,
+  implementations for `(f32, f32, f32)` and `[f32; 3]` are provided.
 
 ## 0.2.2 (2021-07-01)
 

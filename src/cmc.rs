@@ -61,26 +61,38 @@
 ///     assert_eq!(17.743946, delta_e);
 /// }
 /// ```
-pub fn diff(reference: lab::Lab, colour: lab::Lab, lc: (f32, f32)) -> f32 {
-    let delta_l = reference.l - colour.l;
-    let delta_a = reference.a - colour.a;
-    let delta_b = reference.b - colour.b;
-    let c_1 = super::math::hypot(reference.a, reference.b);
-    let c_2 = super::math::hypot(colour.a, colour.b);
+pub fn diff(
+    reference: impl crate::ToLab,
+    colour: impl crate::ToLab,
+    lc: (f32, f32),
+) -> f32 {
+    diff_impl(reference.to_lab(), colour.to_lab(), lc)
+}
+
+fn diff_impl(
+    reference: (f32, f32, f32),
+    colour: (f32, f32, f32),
+    lc: (f32, f32),
+) -> f32 {
+    let delta_l = reference.0 - colour.0;
+    let delta_a = reference.1 - colour.1;
+    let delta_b = reference.2 - colour.2;
+    let c_1 = super::math::hypot(reference.1, reference.2);
+    let c_2 = super::math::hypot(colour.1, colour.2);
     let delta_c = c_1 - c_2;
     let delta_h = (delta_a.powi(2) + delta_b.powi(2) - delta_c.powi(2)).sqrt();
 
-    let s_l = if reference.l < 16.0 {
+    let s_l = if reference.0 < 16.0 {
         const S: f64 = 1639.0f64 / 3206.0f64;
         S as f32
     } else {
-        (0.040975 * reference.l) / (1.0 + 0.01765 * reference.l)
+        (0.040975 * reference.0) / (1.0 + 0.01765 * reference.0)
     };
     let s_c = ((0.0638 * c_1) / (1.0 + (0.0131 * c_1))) + 0.638;
 
     let tmp = c_1.powi(4);
     let f = (tmp / (tmp + 1900.0)).sqrt();
-    let t = get_t(reference.a, reference.b);
+    let t = get_t(reference.1, reference.2);
     let s_h = s_c * (f * t + 1.0 - f);
 
     let l = delta_l / (lc.0 * s_l);
