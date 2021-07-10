@@ -78,6 +78,7 @@ pub fn diff(color_1: impl crate::ToLab, color_2: impl crate::ToLab) -> f32 {
 ///     assert_eq!(58.90164, delta_e);
 /// }
 /// ```
+#[cfg(feature = "lab")]
 pub fn diff_rgb(color_1: &[u8; 3], color_2: &[u8; 3]) -> f32 {
     diff(lab::Lab::from_rgb(color_1), lab::Lab::from_rgb(color_2))
 }
@@ -213,6 +214,7 @@ fn diff_impl(
 ///     assert_eq!(26.88325, delta_e);
 /// }
 /// ```
+#[cfg(feature = "lab")]
 pub fn diff_rgb_with_params(
     color_1: &[u8; 3],
     color_2: &[u8; 3],
@@ -230,6 +232,7 @@ pub fn diff_rgb_with_params(
 pub struct DE2000;
 
 #[allow(deprecated)]
+#[cfg(feature = "lab")]
 impl DE2000 {
     /// Returns the colour difference between two `Lab` colors.
     ///

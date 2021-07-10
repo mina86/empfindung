@@ -43,8 +43,40 @@ fn main() {
 
     let empfindung = cie00::diff(color_1, color_2);
     println!("The color difference is: {}", empfindung);
+
+    let color_1 = (
+        38.972,
+        58.991,
+        37.138,
+    );
+    let color_2 = (
+        54.528,
+        42.416,
+        54.497,
+    );
+
+    let delta_e = cie76::diff(color_1, color_2);
+    println!("The Euclidean distance is: {}", delta_e);
+    assert_eq!(28.601656, delta_e);
 }
 ```
+
+## Crate Features
+
+The crate defines `lab` feature which is enabled by default.  That
+feature adds dependency on the `lab` crate allowing the functions to
+take `lab::Lab` arguments.  Furthermore, without it `diff_rgb`
+functions as well as `DE2000` structure won’t be provided (the latter
+is deprecated anyway though).
+
+Chances are that other part of a project depend on `lab` crate if it
+works on L\*a\*b\* colours space in which case disabling the `lab`
+feature won’t bring any benefit but it may still be beneficial in
+cases where `lab` crate is not used anywhere else (e.g. because
+a different colour conversion libraries are used) or this crate
+somehow falls behind in its version specification for the `lab` crate
+(though at the moment that can only happen if `lab` release version
+1.0).
 
 ## About
 

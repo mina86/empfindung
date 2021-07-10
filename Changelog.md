@@ -10,6 +10,10 @@
 - Add `ToLab` trait so that the diff functions can be used with
   arguments other than `lab::Lab`.  Apart from `lab::Lab`,
   implementations for `(f32, f32, f32)` and `[f32; 3]` are provided.
+- Add `lab` feature (enabled by default) which allows compiling the
+  crate without depending on `lab` crate.  The feature is required to
+  support functions taking `lab::Lab` arguments and by the sRGB
+  handling functions.
 
 ## 0.2.2 (2021-07-01)
 

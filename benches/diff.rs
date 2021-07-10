@@ -1,17 +1,19 @@
 use criterion::{criterion_group, criterion_main};
 
-fn generate_colours(count: usize) -> Vec<lab::Lab> {
+type Tripple = (f32, f32, f32);
+
+fn generate_colours(count: usize) -> Vec<Tripple> {
     use rand::Rng;
     use rand::SeedableRng;
 
     let mut labs = Vec::with_capacity(count);
     let mut rng = rand_xoshiro::Xoshiro256Plus::seed_from_u64(0);
     for _ in 0..count {
-        labs.push(lab::Lab {
-            l: rng.gen_range(0.0..=100.0),
-            a: rng.gen_range(-100.0..=100.0),
-            b: rng.gen_range(-110.0..=100.0),
-        });
+        labs.push((
+            rng.gen_range(0.0..=100.0),
+            rng.gen_range(-100.0..=100.0),
+            rng.gen_range(-110.0..=100.0),
+        ));
     }
     labs
 }
@@ -19,9 +21,9 @@ fn generate_colours(count: usize) -> Vec<lab::Lab> {
 
 fn bench_func(
     c: &mut criterion::Criterion,
-    colours: &[lab::Lab],
+    colours: &[Tripple],
     name: &'static str,
-    diff: impl Fn(lab::Lab, lab::Lab) -> f32,
+    diff: impl Fn(Tripple, Tripple) -> f32,
 ) {
     c.bench_function(name, |b| {
         // Use iter_custom so that we can swap the loops for the loop over

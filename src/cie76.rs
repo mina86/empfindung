@@ -80,6 +80,7 @@ pub fn diff(colour_1: impl crate::ToLab, colour_2: impl crate::ToLab) -> f32 {
 ///     assert_eq!(104.05857, delta_e);
 /// }
 /// ```
+#[cfg(feature = "lab")]
 pub fn diff_rgb(colour_1: &[u8; 3], colour_2: &[u8; 3]) -> f32 {
     diff(lab::Lab::from_rgb(colour_1), lab::Lab::from_rgb(colour_2))
 }

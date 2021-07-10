@@ -163,6 +163,7 @@ fn diff_impl(
 ///     assert_eq!(50.87644, delta_e);
 /// }
 /// ```
+#[cfg(feature = "lab")]
 pub fn diff_rgb(
     reference: &[u8; 3],
     colour: &[u8; 3],

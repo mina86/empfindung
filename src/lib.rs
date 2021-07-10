@@ -29,10 +29,11 @@
 //! The crate provides CIEDE2000 (in [`cie00`] module), CIE94 (in [`cie94`]),
 //! CIE76 (in [`cie76`] module) and CMC l:c (in [`cmc`] module) implementations.
 //!
-//! ## Example:
+//! ## Example
 //!
 //! ```
 //! use empfindung::cie00;
+//! use empfindung::cie76;
 //!
 //! fn main() {
 //!     let color_1 = lab::Lab {
@@ -48,10 +49,41 @@
 //!     };
 //!
 //!     let delta_e = cie00::diff(color_1, color_2);
-//!     println!("The color difference is: {}", delta_e);
+//!     println!("The CIEDE2000 colour difference is: {}", delta_e);
 //!     assert_eq!(20.553642, delta_e);
+//!
+//!     let color_1 = (
+//!         38.972,
+//!         58.991,
+//!         37.138,
+//!     );
+//!
+//!     let color_2 = (
+//!         54.528,
+//!         42.416,
+//!         54.497,
+//!     );
+//!
+//!     let delta_e = cie76::diff(color_1, color_2);
+//!     println!("The Euclidean distance is: {}", delta_e);
+//!     assert_eq!(28.601656, delta_e);
 //! }
 //! ```
+//!
+//! ## Crate Features
+//!
+//! The crate defines `lab` feature which is enabled by default.  That feature
+//! adds dependency on the `lab` crate allowing the functions to take `lab::Lab`
+//! arguments.  Furthermore, without it `diff_rgb` functions as well as `DE2000`
+//! structure won’t be provided (the latter is deprecated anyway though).
+//!
+//! Chances are that other part of a project depend on `lab` crate if it works
+//! on L\*a\*b\* colours space in which case disabling the `lab` feature won’t
+//! bring any benefit but it may still be beneficial in cases where `lab` crate
+//! is not used anywhere else (e.g. because a different colour conversion
+//! libraries are used) or this crate somehow falls behind in its version
+//! specification for the `lab` crate (though at the moment that can only happen
+//! if `lab` release version 1.0).
 
 pub mod cie00;
 pub mod cie76;
@@ -78,6 +110,7 @@ impl ToLab for [f32; 3] {
     fn to_lab(&self) -> (f32, f32, f32) { (self[0], self[1], self[2]) }
 }
 
+#[cfg(feature = "lab")]
 impl ToLab for lab::Lab {
     fn to_lab(&self) -> (f32, f32, f32) { (self.l, self.a, self.b) }
 }

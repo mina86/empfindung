@@ -124,6 +124,7 @@ fn diff_impl(
 ///     assert_eq!(63.303917, delta_e);
 /// }
 /// ```
+#[cfg(feature = "lab")]
 pub fn diff_rgb(reference: &[u8; 3], colour: &[u8; 3], lc: (f32, f32)) -> f32 {
     diff(
         lab::Lab::from_rgb(reference),
