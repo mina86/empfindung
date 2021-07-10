@@ -1,6 +1,6 @@
 # Changelog
 
-## Upcoming
+## 0.2.3 (2021-07-10)
 
 - Rename `de2000` module to `cie00`.  The new name better indicates
   the origin of the metric, i.e. that it was defined by the CIE
