@@ -1,17 +1,19 @@
 use criterion::{criterion_group, criterion_main};
-use rand_xoshiro::rand_core::RngCore;
-use rand_xoshiro::rand_core::SeedableRng;
 
 fn generate_colours(count: usize) -> Vec<lab::Lab> {
-    let mut rgb = Vec::<[u8; 3]>::with_capacity(count);
+    use rand::Rng;
+    use rand::SeedableRng;
+
+    let mut labs = Vec::with_capacity(count);
     let mut rng = rand_xoshiro::Xoshiro256Plus::seed_from_u64(0);
-    rng.fill_bytes(unsafe {
-        std::slice::from_raw_parts_mut(rgb.as_mut_ptr() as *mut u8, count * 3)
-    });
-    unsafe {
-        rgb.set_len(rgb.capacity());
+    for _ in 0..count {
+        labs.push(lab::Lab {
+            l: rng.gen_range(0.0..=100.0),
+            a: rng.gen_range(-100.0..=100.0),
+            b: rng.gen_range(-110.0..=100.0),
+        });
     }
-    lab::rgbs_to_labs(&rgb)
+    labs
 }
 
 fn diff_benchmark(c: &mut criterion::Criterion) {
