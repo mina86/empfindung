@@ -23,7 +23,7 @@
 //!
 //! The CIE76 (ΔE₇₆) is a simple metric based on the L\*a\*b\* colour space.  In
 //! fact, it’s nothing more than Euclidean distance between the two colours in
-//! that that colour space.
+//! that colour space.
 
 /// Returns the CIE76 colour difference between two L\*a\*b\* colours.
 ///
