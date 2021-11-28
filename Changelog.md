@@ -1,6 +1,6 @@
 # Changelog
 
-## Upcoming
+## 0.2.4 (2021-11-28)
 
 - Add support for `rgb` crate and deprecate `diff_rgb` functions in
   favour of running `diff` with `rgb::RGB8` arguments.
