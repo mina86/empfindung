@@ -2,6 +2,8 @@
 
 ## Upcoming
 
+- Add support for `rgb` crate and deprecate `diff_rgb` functions in
+  favour of running `diff` with `rgb::RGB8` arguments.
 - Provide `ToLab` implementation for references so that `diff`
   functions can be called by value or by reference.
 

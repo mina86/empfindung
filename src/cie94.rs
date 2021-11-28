@@ -110,6 +110,14 @@ impl KSubParams {
 ///         reference, colour, cie94::KSubParams::graphic());
 ///     println!("The colour difference is: {}", delta_e);
 ///     assert_eq!(19.482761, delta_e);
+///
+///     let reference = rgb::RGB::<u8>::new(234, 76, 76);
+///     let colour = rgb::RGB::<u8>::new(76, 187, 234);
+///
+///     let delta_e = cie94::diff(
+///         &reference, &colour, cie94::KSubParams::graphic());
+///     println!("The colour difference is: {}", delta_e);
+///     assert_eq!(50.87644, delta_e);
 /// }
 /// ```
 pub fn diff(
@@ -164,6 +172,7 @@ fn diff_impl(
 /// }
 /// ```
 #[cfg(feature = "lab")]
+#[deprecated(note = "Use cie94::diff() with rgb::RGB8 argument")]
 pub fn diff_rgb(
     reference: &[u8; 3],
     colour: &[u8; 3],

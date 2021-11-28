@@ -59,6 +59,17 @@
 ///     let delta_e = cmc::diff(colour_1, colour_2, (2.0, 1.0));
 ///     println!("The colour difference is: {}", delta_e);
 ///     assert_eq!(17.743946, delta_e);
+///
+///     let colour_1 = rgb::RGB::<u8>::new(234, 76, 76);
+///     let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
+///
+///     let delta_e = cmc::diff(&colour_1, &colour_2, (1.0, 1.0));
+///     println!("The colour difference is: {}", delta_e);
+///     assert_eq!(64.49067, delta_e);
+///
+///     let delta_e = cmc::diff(&colour_1, &colour_2, (2.0, 1.0));
+///     println!("The colour difference is: {}", delta_e);
+///     assert_eq!(63.303917, delta_e);
 /// }
 /// ```
 pub fn diff(
@@ -125,6 +136,7 @@ fn diff_impl(
 /// }
 /// ```
 #[cfg(feature = "lab")]
+#[deprecated(note = "Use cmc::diff() with rgb::RGB8 argument")]
 pub fn diff_rgb(reference: &[u8; 3], colour: &[u8; 3], lc: (f32, f32)) -> f32 {
     diff(
         lab::Lab::from_rgb(reference),

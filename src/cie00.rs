@@ -54,6 +54,19 @@
 ///     let delta_e = cie00::diff(color_1, color_2);
 ///     println!("The color difference is: {}", delta_e);
 ///     assert_eq!(20.553642, delta_e);
+///
+///     let color_1 = rgb::RGB::<u8>::new(234, 76, 76);
+///     let color_2 = rgb::RGB::<u8>::new(76, 187, 234);
+///     let delta_e = cie00::diff(color_1, color_2);
+///     println!("The color difference is: {}", delta_e);
+///     assert_eq!(58.90164, delta_e);
+///
+///     // Alpha value is ignored.
+///     let color_1 = rgb::RGBA::<u8>::new(234, 76, 76, 50);
+///     let color_2 = rgb::RGBA::<u8>::new(76, 187, 234, 200);
+///     let delta_e = cie00::diff(color_1, color_2);
+///     println!("The color difference is: {}", delta_e);
+///     assert_eq!(58.90164, delta_e);
 /// }
 /// ```
 pub fn diff(color_1: impl crate::ToLab, color_2: impl crate::ToLab) -> f32 {
@@ -79,6 +92,7 @@ pub fn diff(color_1: impl crate::ToLab, color_2: impl crate::ToLab) -> f32 {
 /// }
 /// ```
 #[cfg(feature = "lab")]
+#[deprecated(note = "Use cie00::diff() with rgb::RGB8 argument")]
 pub fn diff_rgb(color_1: &[u8; 3], color_2: &[u8; 3]) -> f32 {
     diff(lab::Lab::from_rgb(color_1), lab::Lab::from_rgb(color_2))
 }
@@ -215,6 +229,7 @@ fn diff_impl(
 /// }
 /// ```
 #[cfg(feature = "lab")]
+#[deprecated(note = "Use cie00::diff_with_params() with rgb::RGB8 argument")]
 pub fn diff_rgb_with_params(
     color_1: &[u8; 3],
     color_2: &[u8; 3],

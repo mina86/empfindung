@@ -72,18 +72,18 @@
 //!
 //! ## Crate Features
 //!
-//! The crate defines `lab` feature which is enabled by default.  That feature
-//! adds dependency on the `lab` crate allowing the functions to take `lab::Lab`
-//! arguments.  Furthermore, without it `diff_rgb` functions as well as `DE2000`
-//! structure won’t be provided (the latter is deprecated anyway though).
+//! The crate defines `lab` and `rgb` features which are enabled by default.
 //!
-//! Chances are that other part of a project depend on `lab` crate if it works
-//! on L\*a\*b\* colours space in which case disabling the `lab` feature won’t
-//! bring any benefit but it may still be beneficial in cases where `lab` crate
-//! is not used anywhere else (e.g. because a different colour conversion
-//! libraries are used) or this crate somehow falls behind in its version
-//! specification for the `lab` crate (though at the moment that can only happen
-//! if `lab` release version 1.0).
+//! With both of them enabled, create provides [`ToLab`] implementation for
+//! `rgb::RGB<u8>` type which means that `diff` functions can be used with
+//! `rgb::RGB<u8>` arguments.
+//!
+//! Furthermore, if `lab` enabled the `diff` functions can accept `lab::Lab`
+//! argument and `diff_rgb` functions as well as `DE2000` is provided.  Note
+//! that the latter two are a deprecated features.
+
+#[cfg(all(feature = "lab", feature = "rgb"))]
+use std::convert::TryInto;
 
 pub mod cie00;
 pub mod cie76;
@@ -126,6 +126,37 @@ impl ToLab for lab::Lab {
 #[cfg(feature = "lab")]
 impl ToLab for &lab::Lab {
     fn to_lab(&self) -> (f32, f32, f32) { (self.l, self.a, self.b) }
+}
+
+#[cfg(all(feature = "lab", feature = "rgb"))]
+impl ToLab for rgb::RGB<u8> {
+    fn to_lab(&self) -> (f32, f32, f32) {
+        lab::Lab::from_rgb(self.as_ref().try_into().unwrap()).to_lab()
+    }
+}
+
+#[cfg(all(feature = "lab", feature = "rgb"))]
+impl ToLab for &rgb::RGB<u8> {
+    fn to_lab(&self) -> (f32, f32, f32) {
+        lab::Lab::from_rgb(self.as_ref().try_into().unwrap()).to_lab()
+    }
+}
+
+#[cfg(all(feature = "lab", feature = "rgb"))]
+impl ToLab for rgb::RGBA<u8> {
+    /// Assumes an sRGB colour and converts it into L\*a\*\b\*.
+    fn to_lab(&self) -> (f32, f32, f32) {
+        lab::Lab::from_rgb(self.as_ref()[0..3].try_into().unwrap()).to_lab()
+    }
+}
+
+#[cfg(all(feature = "lab", feature = "rgb"))]
+impl ToLab for &rgb::RGBA<u8> {
+    /// Assumes an sRGB colour and converts it into L\*a\*\b\* ignoring its
+    /// alpha.
+    fn to_lab(&self) -> (f32, f32, f32) {
+        lab::Lab::from_rgb(self.as_ref()[0..3].try_into().unwrap()).to_lab()
+    }
 }
 
 

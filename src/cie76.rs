@@ -51,6 +51,13 @@
 ///     let delta_e = cie76::diff(colour_1, colour_2);
 ///     println!("The colour difference is: {}", delta_e);
 ///     assert_eq!(28.601656, delta_e);
+///
+///     let colour_1 = rgb::RGB::<u8>::new(234, 76, 76);
+///     let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
+///
+///     let delta_e = cie76::diff(colour_1, colour_2);
+///     println!("The colour difference is: {}", delta_e);
+///     assert_eq!(104.05857, delta_e);
 /// }
 /// ```
 pub fn diff(colour_1: impl crate::ToLab, colour_2: impl crate::ToLab) -> f32 {
@@ -81,6 +88,7 @@ pub fn diff(colour_1: impl crate::ToLab, colour_2: impl crate::ToLab) -> f32 {
 /// }
 /// ```
 #[cfg(feature = "lab")]
+#[deprecated(note = "Use cie76::diff() with rgb::RGB8 argument")]
 pub fn diff_rgb(colour_1: &[u8; 3], colour_2: &[u8; 3]) -> f32 {
     diff(lab::Lab::from_rgb(colour_1), lab::Lab::from_rgb(colour_2))
 }
