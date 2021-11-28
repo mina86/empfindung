@@ -1,5 +1,10 @@
 # Changelog
 
+## Upcoming
+
+- Provide `ToLab` implementation for references so that `diff`
+  functions can be called by value or by reference.
+
 ## 0.2.3 (2021-07-10)
 
 - Rename `de2000` module to `cie00`.  The new name better indicates

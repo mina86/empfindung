@@ -106,12 +106,25 @@ impl ToLab for (f32, f32, f32) {
     fn to_lab(&self) -> (f32, f32, f32) { *self }
 }
 
+impl ToLab for &(f32, f32, f32) {
+    fn to_lab(&self) -> (f32, f32, f32) { **self }
+}
+
 impl ToLab for [f32; 3] {
+    fn to_lab(&self) -> (f32, f32, f32) { (self[0], self[1], self[2]) }
+}
+
+impl ToLab for &[f32; 3] {
     fn to_lab(&self) -> (f32, f32, f32) { (self[0], self[1], self[2]) }
 }
 
 #[cfg(feature = "lab")]
 impl ToLab for lab::Lab {
+    fn to_lab(&self) -> (f32, f32, f32) { (self.l, self.a, self.b) }
+}
+
+#[cfg(feature = "lab")]
+impl ToLab for &lab::Lab {
     fn to_lab(&self) -> (f32, f32, f32) { (self.l, self.a, self.b) }
 }
 
