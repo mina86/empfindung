@@ -88,7 +88,8 @@ fn diff_impl(
     let delta_l = reference.0 - colour.0;
     let delta_a = reference.1 - colour.1;
     let delta_b = reference.2 - colour.2;
-    let c_1 = super::math::hypot(reference.1, reference.2);
+    let c_1_squared = super::math::hypot_squared(reference.1, reference.2);
+    let c_1 = c_1_squared.sqrt();
     let c_2 = super::math::hypot(colour.1, colour.2);
     let delta_c = c_1 - c_2;
     let delta_h = (delta_a.powi(2) + delta_b.powi(2) - delta_c.powi(2)).sqrt();
@@ -101,7 +102,7 @@ fn diff_impl(
     };
     let s_c = ((0.0638 * c_1) / (1.0 + (0.0131 * c_1))) + 0.638;
 
-    let tmp = c_1.powi(4);
+    let tmp = c_1_squared * c_1_squared;
     let f = (tmp / (tmp + 1900.0)).sqrt();
     let t = get_t(reference.1, reference.2);
     let s_h = s_c * (f * t + 1.0 - f);
