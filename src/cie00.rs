@@ -35,18 +35,35 @@
 /// ```
 /// use empfindung::cie00;
 ///
-/// let colour_1 = lab::Lab { l: 38.972, a: 58.991, b: 37.138 };
-/// let colour_2 = lab::Lab { l: 54.528, a: 42.416, b: 54.497 };
+#[cfg_attr(
+    feature = "lab",
+    doc = "
+let colour_1 = lab::Lab { l: 38.972, a: 58.991, b: 37.138 };
+let colour_2 = lab::Lab { l: 54.528, a: 42.416, b: 54.497 };
+"
+)]
+#[cfg_attr(
+    not(feature = "lab"),
+    doc = "
+let colour_1 = (38.972, 58.991, 37.138);
+let colour_2 = (54.528, 42.416, 54.497);
+"
+)]
 ///
 /// let delta_e = cie00::diff(colour_1, colour_2);
 /// println!("The colour difference is: {}", delta_e);
 /// assert_eq!(20.553642, delta_e);
-///
-/// let colour_1 = rgb::RGB::<u8>::new(234, 76, 76);
-/// let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
-/// let delta_e = cie00::diff(colour_1, colour_2);
-/// println!("The colour difference is: {}", delta_e);
-/// assert_eq!(58.90164, delta_e);
+#[cfg_attr(
+    all(feature = "lab", feature = "rgb"),
+    doc = r#"
+
+let colour_1 = rgb::RGB::<u8>::new(234, 76, 76);
+let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
+let delta_e = cie00::diff(colour_1, colour_2);
+println!("The colour difference is: {}", delta_e);
+assert_eq!(58.90164, delta_e);
+"#
+)]
 /// ```
 pub fn diff(color_1: impl crate::ToLab, color_2: impl crate::ToLab) -> f32 {
     diff_with_params(color_1, color_2, KSubParams::default())
@@ -100,8 +117,20 @@ pub struct KSubParams {
 /// ```
 /// use empfindung::cie00;
 ///
-/// let colour_1 = lab::Lab { l: 38.972, a: 58.991, b: 37.138 };
-/// let colour_2 = lab::Lab { l: 54.528, a: 42.416, b: 54.497 };
+#[cfg_attr(
+    feature = "lab",
+    doc = "
+let colour_1 = lab::Lab { l: 38.972, a: 58.991, b: 37.138 };
+let colour_2 = lab::Lab { l: 54.528, a: 42.416, b: 54.497 };
+"
+)]
+#[cfg_attr(
+    not(feature = "lab"),
+    doc = "
+let colour_1 = (38.972, 58.991, 37.138);
+let colour_2 = (54.528, 42.416, 54.497);
+"
+)]
 ///
 /// let delta_e = cie00::diff_with_params(
 ///     colour_1, colour_2, cie00::KSubParams::yang2012());
@@ -213,8 +242,20 @@ impl DE2000 {
     /// ```
     /// use empfindung::DE2000;
     ///
-    /// let colour_1 = lab::Lab { l: 38.972, a: 58.991, b: 37.138 };
-    /// let colour_2 = lab::Lab { l: 54.528, a: 42.416, b: 54.497 };
+    #[cfg_attr(
+        feature = "lab",
+        doc = "
+let colour_1 = lab::Lab { l: 38.972, a: 58.991, b: 37.138 };
+let colour_2 = lab::Lab { l: 54.528, a: 42.416, b: 54.497 };
+"
+    )]
+    #[cfg_attr(
+        not(feature = "lab"),
+        doc = "
+let colour_1 = (38.972, 58.991, 37.138);
+let colour_2 = (54.528, 42.416, 54.497);
+"
+    )]
     ///
     /// let delta_e = DE2000::new(colour_1, colour_2);
     /// println!("The colour difference is: {}", delta_e);

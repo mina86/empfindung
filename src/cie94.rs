@@ -90,21 +90,38 @@ impl KSubParams {
 /// ```
 /// use empfindung::cie94;
 ///
-/// let reference = lab::Lab { l: 38.972, a: 58.991, b: 37.138 };
-/// let colour = lab::Lab { l: 54.528, a: 42.416, b: 54.497 };
+#[cfg_attr(
+    feature = "lab",
+    doc = "
+let reference = lab::Lab { l: 38.972, a: 58.991, b: 37.138 };
+let colour = lab::Lab { l: 54.528, a: 42.416, b: 54.497 };
+"
+)]
+#[cfg_attr(
+    not(feature = "lab"),
+    doc = "
+let reference = (38.972, 58.991, 37.138);
+let colour = (54.528, 42.416, 54.497);
+"
+)]
 ///
 /// let delta_e = cie94::diff(
 ///     reference, colour, cie94::KSubParams::graphic());
 /// println!("The colour difference is: {}", delta_e);
 /// assert_eq!(19.482761, delta_e);
-///
-/// let reference = rgb::RGB::<u8>::new(234, 76, 76);
-/// let colour = rgb::RGB::<u8>::new(76, 187, 234);
-///
-/// let delta_e = cie94::diff(
-///     &reference, &colour, cie94::KSubParams::graphic());
-/// println!("The colour difference is: {}", delta_e);
-/// assert_eq!(50.87644, delta_e);
+#[cfg_attr(
+    all(feature = "lab", feature = "rgb"),
+    doc = r#"
+
+let reference = rgb::RGB::<u8>::new(234, 76, 76);
+let colour = rgb::RGB::<u8>::new(76, 187, 234);
+
+let delta_e = cie94::diff(
+    &reference, &colour, cie94::KSubParams::graphic());
+println!("The colour difference is: {}", delta_e);
+assert_eq!(50.87644, delta_e);
+"#
+)]
 /// ```
 pub fn diff(
     reference: impl crate::ToLab,

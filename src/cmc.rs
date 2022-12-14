@@ -36,8 +36,20 @@
 /// ```
 /// use empfindung::cmc;
 ///
-/// let colour_1 = lab::Lab { l: 38.972, a: 58.991, b: 37.138 };
-/// let colour_2 = lab::Lab { l: 54.528, a: 42.416, b: 54.497 };
+#[cfg_attr(
+    feature = "lab",
+    doc = "
+let colour_1 = lab::Lab { l: 38.972, a: 58.991, b: 37.138 };
+let colour_2 = lab::Lab { l: 54.528, a: 42.416, b: 54.497 };
+"
+)]
+#[cfg_attr(
+    not(feature = "lab"),
+    doc = "
+let colour_1 = (38.972, 58.991, 37.138);
+let colour_2 = (54.528, 42.416, 54.497);
+"
+)]
 ///
 /// let delta_e = cmc::diff(colour_1, colour_2, (1.0, 1.0));
 /// println!("The colour difference is: {}", delta_e);
@@ -46,17 +58,22 @@
 /// let delta_e = cmc::diff(colour_1, colour_2, (2.0, 1.0));
 /// println!("The colour difference is: {}", delta_e);
 /// assert_eq!(17.743946, delta_e);
-///
-/// let colour_1 = rgb::RGB::<u8>::new(234, 76, 76);
-/// let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
-///
-/// let delta_e = cmc::diff(&colour_1, &colour_2, (1.0, 1.0));
-/// println!("The colour difference is: {}", delta_e);
-/// assert_eq!(64.49067, delta_e);
-///
-/// let delta_e = cmc::diff(&colour_1, &colour_2, (2.0, 1.0));
-/// println!("The colour difference is: {}", delta_e);
-/// assert_eq!(63.303917, delta_e);
+#[cfg_attr(
+    all(feature = "lab", feature = "rgb"),
+    doc = r#"
+
+let colour_1 = rgb::RGB::<u8>::new(234, 76, 76);
+let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
+
+let delta_e = cmc::diff(&colour_1, &colour_2, (1.0, 1.0));
+println!("The colour difference is: {}", delta_e);
+assert_eq!(64.49067, delta_e);
+
+let delta_e = cmc::diff(&colour_1, &colour_2, (2.0, 1.0));
+println!("The colour difference is: {}", delta_e);
+assert_eq!(63.303917, delta_e);
+"#
+)]
 /// ```
 pub fn diff(
     reference: impl crate::ToLab,

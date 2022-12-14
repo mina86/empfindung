@@ -1,0 +1,8 @@
+language: rust
+rust:
+  - stable
+matrix:
+  fast_finish: true
+script:
+  - cargo test --verbose
+  - cargo test --verbose --no-default-features
