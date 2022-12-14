@@ -150,15 +150,6 @@ impl ToLab for rgb::RGBA<u8> {
     }
 }
 
-#[cfg(all(feature = "lab", feature = "rgb"))]
-impl ToLab for &rgb::RGBA<u8> {
-    /// Assumes an sRGB colour and converts it into L\*a\*\b\* ignoring its
-    /// alpha.
-    fn to_lab(&self) -> (f32, f32, f32) {
-        lab::Lab::from_rgb(self.as_ref()[0..3].try_into().unwrap()).to_lab()
-    }
-}
-
 
 pub(crate) mod math {
     pub fn hypot(x: f32, y: f32) -> f32 { (x * x + y * y).sqrt() }

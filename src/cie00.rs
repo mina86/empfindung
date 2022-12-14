@@ -60,13 +60,6 @@
 ///     let delta_e = cie00::diff(color_1, color_2);
 ///     println!("The color difference is: {}", delta_e);
 ///     assert_eq!(58.90164, delta_e);
-///
-///     // Alpha value is ignored.
-///     let color_1 = rgb::RGBA::<u8>::new(234, 76, 76, 50);
-///     let color_2 = rgb::RGBA::<u8>::new(76, 187, 234, 200);
-///     let delta_e = cie00::diff(color_1, color_2);
-///     println!("The color difference is: {}", delta_e);
-///     assert_eq!(58.90164, delta_e);
 /// }
 /// ```
 pub fn diff(color_1: impl crate::ToLab, color_2: impl crate::ToLab) -> f32 {
