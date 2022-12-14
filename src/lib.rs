@@ -23,7 +23,7 @@
 //!
 //! Empfindung is a library providing implementations of colour difference
 //! algorithms.  Specifically, distances based on L\*a\*b\* colour space often
-//! referred to as ΔE*.  (This is also where the package gets its name.  The ‘E’
+//! referred to as ΔE.  (This is also where the package gets its name.  The ‘E’
 //! stands for German ‘Empfindung’).
 //!
 //! The crate provides CIEDE2000 (in [`cie00`] module), CIE94 (in [`cie94`]),
@@ -85,9 +85,6 @@ assert_eq!(58.90164, delta_e);
 //! argument and `diff_rgb` functions as well as `DE2000` is provided.  Note
 //! that the latter two are a deprecated features.
 
-#[cfg(all(feature = "lab", feature = "rgb"))]
-use std::convert::TryInto;
-
 pub mod cie00;
 pub mod cie76;
 pub mod cie94;
@@ -105,54 +102,12 @@ pub trait ToLab {
     fn to_lab(&self) -> (f32, f32, f32);
 }
 
-impl ToLab for (f32, f32, f32) {
-    fn to_lab(&self) -> (f32, f32, f32) { *self }
+impl<T: ToLab> ToLab for &T {
+    #[inline]
+    fn to_lab(&self) -> (f32, f32, f32) { (*self).to_lab() }
 }
 
-impl ToLab for &(f32, f32, f32) {
-    fn to_lab(&self) -> (f32, f32, f32) { **self }
-}
-
-impl ToLab for [f32; 3] {
-    fn to_lab(&self) -> (f32, f32, f32) { (self[0], self[1], self[2]) }
-}
-
-impl ToLab for &[f32; 3] {
-    fn to_lab(&self) -> (f32, f32, f32) { (self[0], self[1], self[2]) }
-}
-
-#[cfg(feature = "lab")]
-impl ToLab for lab::Lab {
-    fn to_lab(&self) -> (f32, f32, f32) { (self.l, self.a, self.b) }
-}
-
-#[cfg(feature = "lab")]
-impl ToLab for &lab::Lab {
-    fn to_lab(&self) -> (f32, f32, f32) { (self.l, self.a, self.b) }
-}
-
-#[cfg(all(feature = "lab", feature = "rgb"))]
-impl ToLab for rgb::RGB<u8> {
-    fn to_lab(&self) -> (f32, f32, f32) {
-        lab::Lab::from_rgb(self.as_ref().try_into().unwrap()).to_lab()
-    }
-}
-
-#[cfg(all(feature = "lab", feature = "rgb"))]
-impl ToLab for &rgb::RGB<u8> {
-    fn to_lab(&self) -> (f32, f32, f32) {
-        lab::Lab::from_rgb(self.as_ref().try_into().unwrap()).to_lab()
-    }
-}
-
-#[cfg(all(feature = "lab", feature = "rgb"))]
-impl ToLab for rgb::RGBA<u8> {
-    /// Assumes an sRGB colour and converts it into L\*a\*\b\*.
-    fn to_lab(&self) -> (f32, f32, f32) {
-        lab::Lab::from_rgb(self.as_ref()[0..3].try_into().unwrap()).to_lab()
-    }
-}
-
+mod to_lab_impls;
 
 pub(crate) mod math {
     pub fn hypot(x: f32, y: f32) -> f32 { (x * x + y * y).sqrt() }
