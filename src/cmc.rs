@@ -34,43 +34,29 @@
 /// ### Example
 ///
 /// ```
-/// extern crate empfindung;
-/// extern crate lab;
-///
 /// use empfindung::cmc;
 ///
-/// fn main() {
-///     let colour_1 = lab::Lab {
-///         l: 38.972,
-///         a: 58.991,
-///         b: 37.138,
-///     };
+/// let colour_1 = lab::Lab { l: 38.972, a: 58.991, b: 37.138 };
+/// let colour_2 = lab::Lab { l: 54.528, a: 42.416, b: 54.497 };
 ///
-///     let colour_2 = lab::Lab {
-///         l: 54.528,
-///         a: 42.416,
-///         b: 54.497,
-///     };
+/// let delta_e = cmc::diff(colour_1, colour_2, (1.0, 1.0));
+/// println!("The colour difference is: {}", delta_e);
+/// assert_eq!(22.751015, delta_e);
 ///
-///     let delta_e = cmc::diff(colour_1, colour_2, (1.0, 1.0));
-///     println!("The colour difference is: {}", delta_e);
-///     assert_eq!(22.751015, delta_e);
+/// let delta_e = cmc::diff(colour_1, colour_2, (2.0, 1.0));
+/// println!("The colour difference is: {}", delta_e);
+/// assert_eq!(17.743946, delta_e);
 ///
-///     let delta_e = cmc::diff(colour_1, colour_2, (2.0, 1.0));
-///     println!("The colour difference is: {}", delta_e);
-///     assert_eq!(17.743946, delta_e);
+/// let colour_1 = rgb::RGB::<u8>::new(234, 76, 76);
+/// let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
 ///
-///     let colour_1 = rgb::RGB::<u8>::new(234, 76, 76);
-///     let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
+/// let delta_e = cmc::diff(&colour_1, &colour_2, (1.0, 1.0));
+/// println!("The colour difference is: {}", delta_e);
+/// assert_eq!(64.49067, delta_e);
 ///
-///     let delta_e = cmc::diff(&colour_1, &colour_2, (1.0, 1.0));
-///     println!("The colour difference is: {}", delta_e);
-///     assert_eq!(64.49067, delta_e);
-///
-///     let delta_e = cmc::diff(&colour_1, &colour_2, (2.0, 1.0));
-///     println!("The colour difference is: {}", delta_e);
-///     assert_eq!(63.303917, delta_e);
-/// }
+/// let delta_e = cmc::diff(&colour_1, &colour_2, (2.0, 1.0));
+/// println!("The colour difference is: {}", delta_e);
+/// assert_eq!(63.303917, delta_e);
 /// ```
 pub fn diff(
     reference: impl crate::ToLab,
@@ -119,22 +105,18 @@ fn diff_impl(
 /// ### Example
 ///
 /// ```
-/// extern crate empfindung;
-///
 /// use empfindung::cmc;
 ///
-/// fn main() {
-///     let colour_1 = [234, 76, 76];
-///     let colour_2 = [76, 187, 234];
+/// let colour_1 = [234, 76, 76];
+/// let colour_2 = [76, 187, 234];
 ///
-///     let delta_e = cmc::diff_rgb(&colour_1, &colour_2, (1.0, 1.0));
-///     println!("The colour difference is: {}", delta_e);
-///     assert_eq!(64.49067, delta_e);
+/// let delta_e = cmc::diff_rgb(&colour_1, &colour_2, (1.0, 1.0));
+/// println!("The colour difference is: {}", delta_e);
+/// assert_eq!(64.49067, delta_e);
 ///
-///     let delta_e = cmc::diff_rgb(&colour_1, &colour_2, (2.0, 1.0));
-///     println!("The colour difference is: {}", delta_e);
-///     assert_eq!(63.303917, delta_e);
-/// }
+/// let delta_e = cmc::diff_rgb(&colour_1, &colour_2, (2.0, 1.0));
+/// println!("The colour difference is: {}", delta_e);
+/// assert_eq!(63.303917, delta_e);
 /// ```
 #[cfg(feature = "lab")]
 #[deprecated(note = "Use cmc::diff() with rgb::RGB8 argument")]

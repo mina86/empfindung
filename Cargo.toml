@@ -1,6 +1,6 @@
 [package]
 name          = "empfindung"
-description   = "Empfindung is a pure-Rust implementation of the CIEDE2000 colour difference"
+description   = "Empfindung is an implementation of the CIE Delta E colour difference algorithms"
 version       = "0.2.5"
 authors       = ["Elliot Jackson <elliotekj@gmail.com>",
                  "Michal Nazarewicz <mina86@mina86.com>"]

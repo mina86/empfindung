@@ -1,4 +1,4 @@
-# Empfindung - Quantify color differences in Rust
+# Empfindung - Quantify colour differences in Rust
 
 [![crates.io](https://img.shields.io/crates/v/empfindung)](https://crates.io/crates/empfindung)
 [![Docs](https://docs.rs/empfindung/badge.svg)](https://docs.rs/empfindung)
@@ -23,60 +23,37 @@ empfindung = "0.2"
 ## Example
 
 ```rust
-extern crate empfindung;
-extern crate lab;
-
 use empfindung::cie00;
 
 fn main() {
-    let color_1 = lab::Lab {
-        l: 38.972,
-        a: 58.991,
-        b: 37.138,
-    };
+    let colour_1 = lab::Lab { l: 38.972, a: 58.991, b: 37.138 };
+    let colour_2 = lab::Lab { l: 54.528, a: 42.416, b: 54.497 };
 
-    let color_2 = lab::Lab {
-        l: 54.528,
-        a: 42.416,
-        b: 54.497,
-    };
+    let empfindung = cie00::diff(colour_1, colour_2);
+    println!("The colour difference is: {}", empfindung);
 
-    let empfindung = cie00::diff(color_1, color_2);
-    println!("The color difference is: {}", empfindung);
+    let colour_1 = ( 38.972, 58.991, 37.138 );
+    let colour_2 = ( 54.528, 42.416, 54.497 );
 
-    let color_1 = (
-        38.972,
-        58.991,
-        37.138,
-    );
-    let color_2 = (
-        54.528,
-        42.416,
-        54.497,
-    );
-
-    let delta_e = cie76::diff(color_1, color_2);
+    let delta_e = cie76::diff(colour_1, colour_2);
     println!("The Euclidean distance is: {}", delta_e);
     assert_eq!(28.601656, delta_e);
+
+    let colour_1 = rgb::RGB::<u8>::new(234, 76, 76);
+    let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
+    let delta_e = cie00::diff(colour_1, colour_2);
+    println!("The CIEDE200 colour difference is: {}", delta_e);
+    assert_eq!(58.90164, delta_e);
 }
 ```
 
 ## Crate Features
 
-The crate defines `lab` feature which is enabled by default.  That
-feature adds dependency on the `lab` crate allowing the functions to
-take `lab::Lab` arguments.  Furthermore, without it `diff_rgb`
-functions as well as `DE2000` structure won’t be provided (the latter
-is deprecated anyway though).
-
-Chances are that other part of a project depend on `lab` crate if it
-works on L\*a\*b\* colours space in which case disabling the `lab`
-feature won’t bring any benefit but it may still be beneficial in
-cases where `lab` crate is not used anywhere else (e.g. because
-a different colour conversion libraries are used) or this crate
-somehow falls behind in its version specification for the `lab` crate
-(though at the moment that can only happen if `lab` release version
-1.0).
+The crate defines `lab` and `rgb` features which are enabled by
+default.  The former adds dependency on the `lab` crate and allows
+functions to take `lab::Lab` arguments.  The latter adds dependency on
+`rgb` crate and further allows functions to take `rgb::RGB<u8>`
+arguments.
 
 ## About
 
@@ -86,17 +63,16 @@ Nazarewicz](https://mina86.com) after long inactivity.  Aside from the
 package name change, it is a drop-in replacement for the `delta_e`
 create.
 
-Migrating from to `empfindung` can be performed by using `use`
-declaration with an alias:
+A quick migrating from to `empfindung` can be performed via `use`
+declaration as follows:
 
 ```rust
 use empfindung as delta_e;
 ```
 
-or changing the paths using `delta_e` crate name to use `empfindung`
-instead.  In particular, if `use delta_e::DE2000;` declaration was
-used, it’s enough to change it to the following without having to
-touch the rest of the code:
+or changing the paths to use the new crate name.  In particular, if
+`use delta_e::DE2000;` declaration is used, it’s enough to replace it
+by the following without having to touch the rest of the code:
 
 ```rust
 use empfindung::DE2000;  // was use delta_e::DE2000;
