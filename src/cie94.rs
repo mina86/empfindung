@@ -108,7 +108,7 @@ let colour = (54.528, 42.416, 54.497);
 /// let delta_e = cie94::diff(
 ///     reference, colour, cie94::KSubParams::graphic());
 /// println!("The colour difference is: {}", delta_e);
-/// assert_eq!(19.482761, delta_e);
+/// approx::assert_abs_diff_eq!(19.482761, delta_e, epsilon = 0.001);
 #[cfg_attr(
     all(feature = "lab", feature = "rgb"),
     doc = r#"
@@ -119,7 +119,7 @@ let colour = rgb::RGB::<u8>::new(76, 187, 234);
 let delta_e = cie94::diff(
     &reference, &colour, cie94::KSubParams::graphic());
 println!("The colour difference is: {}", delta_e);
-assert_eq!(50.87644, delta_e);
+approx::assert_abs_diff_eq!(50.87644, delta_e, epsilon = 0.001);
 "#
 )]
 /// ```
@@ -168,7 +168,7 @@ fn diff_impl(
 /// let delta_e = cie94::diff_rgb(
 ///     &reference, &colour, cie94::KSubParams::graphic());
 /// println!("The colour difference is: {}", delta_e);
-/// assert_eq!(50.87644, delta_e);
+/// approx::assert_abs_diff_eq!(50.87644, delta_e, epsilon = 0.001);
 /// ```
 #[cfg(feature = "lab")]
 #[deprecated(note = "Use cie94::diff() with rgb::RGB8 argument")]

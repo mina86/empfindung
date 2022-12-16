@@ -49,7 +49,7 @@ let colour_2 = (54.528, 42.416, 54.497);
 ///
 /// let delta_e = cie76::diff(colour_1, colour_2);
 /// println!("The colour difference is: {}", delta_e);
-/// assert_eq!(28.601656, delta_e);
+/// approx::assert_abs_diff_eq!(28.601656, delta_e, epsilon = 0.001);
 #[cfg_attr(
     all(feature = "lab", feature = "rgb"),
     doc = r#"
@@ -59,7 +59,7 @@ let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
 
 let delta_e = cie76::diff(colour_1, colour_2);
 println!("The colour difference is: {}", delta_e);
-assert_eq!(104.05857, delta_e);
+approx::assert_abs_diff_eq!(104.05857, delta_e, epsilon = 0.001);
 "#
 )]
 /// ```
@@ -84,7 +84,7 @@ pub fn diff(colour_1: impl crate::ToLab, colour_2: impl crate::ToLab) -> f32 {
 ///
 /// let delta_e = cie76::diff_rgb(&colour_1, &colour_2);
 /// println!("The colour difference is: {}", delta_e);
-/// assert_eq!(104.05857, delta_e);
+/// approx::assert_abs_diff_eq!(104.05857, delta_e, epsilon = 0.001);
 /// ```
 #[cfg(feature = "lab")]
 #[deprecated(note = "Use cie76::diff() with rgb::RGB8 argument")]

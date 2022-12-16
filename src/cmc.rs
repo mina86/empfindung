@@ -53,11 +53,11 @@ let colour_2 = (54.528, 42.416, 54.497);
 ///
 /// let delta_e = cmc::diff(colour_1, colour_2, (1.0, 1.0));
 /// println!("The colour difference is: {}", delta_e);
-/// assert_eq!(22.751015, delta_e);
+/// approx::assert_abs_diff_eq!(22.751015, delta_e, epsilon = 0.001);
 ///
 /// let delta_e = cmc::diff(colour_1, colour_2, (2.0, 1.0));
 /// println!("The colour difference is: {}", delta_e);
-/// assert_eq!(17.743946, delta_e);
+/// approx::assert_abs_diff_eq!(17.743946, delta_e, epsilon = 0.001);
 #[cfg_attr(
     all(feature = "lab", feature = "rgb"),
     doc = r#"
@@ -67,11 +67,11 @@ let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
 
 let delta_e = cmc::diff(&colour_1, &colour_2, (1.0, 1.0));
 println!("The colour difference is: {}", delta_e);
-assert_eq!(64.49067, delta_e);
+approx::assert_abs_diff_eq!(64.49067, delta_e, epsilon = 0.001);
 
 let delta_e = cmc::diff(&colour_1, &colour_2, (2.0, 1.0));
 println!("The colour difference is: {}", delta_e);
-assert_eq!(63.303917, delta_e);
+approx::assert_abs_diff_eq!(63.303917, delta_e, epsilon = 0.001);
 "#
 )]
 /// ```
@@ -129,11 +129,11 @@ fn diff_impl(
 ///
 /// let delta_e = cmc::diff_rgb(&colour_1, &colour_2, (1.0, 1.0));
 /// println!("The colour difference is: {}", delta_e);
-/// assert_eq!(64.49067, delta_e);
+/// approx::assert_abs_diff_eq!(64.49067, delta_e, epsilon = 0.001);
 ///
 /// let delta_e = cmc::diff_rgb(&colour_1, &colour_2, (2.0, 1.0));
 /// println!("The colour difference is: {}", delta_e);
-/// assert_eq!(63.303917, delta_e);
+/// approx::assert_abs_diff_eq!(63.303917, delta_e, epsilon = 0.001);
 /// ```
 #[cfg(feature = "lab")]
 #[deprecated(note = "Use cmc::diff() with rgb::RGB8 argument")]
