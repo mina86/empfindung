@@ -88,16 +88,16 @@ pub fn main() {
     println!("ΔE_76  = {:>11.7}  (Euclidean distance)", cie76::diff(a, b));
     println!(
         "ΔE_94g = {:>11.7}  (parameters for graphic arts)",
-        cie94::diff(a, b, cie94::KSubParams::graphic())
+        cie94::diff(a, b, cie94::Params::graphic())
     );
     println!(
         "ΔE_94t = {:>11.7}  (parameters for textiles)",
-        cie94::diff(a, b, cie94::KSubParams::textiles())
+        cie94::diff(a, b, cie94::Params::textiles())
     );
     println!("ΔE_00  = {:>11.7}  (default parameters", cie00::diff(a, b));
     println!(
         "ΔE_00y = {:>11.7}  (parameters by Yang et al)",
-        cie00::diff_with_params(a, b, cie00::KSubParams::yang2012())
+        cie00::diff_with_params(a, b, cie00::Params::yang2012())
     );
     println!("ΔE_1:1 = {:>11.7}  (CMC 1:1)", cmc::diff(a, b, cmc::LC11));
     println!("ΔE_1:1 = {:>11.7}  (CMC 2:1)", cmc::diff(a, b, cmc::LC21));

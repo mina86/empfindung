@@ -43,7 +43,7 @@ fn bench_func(
 }
 
 fn diff_benchmark(c: &mut criterion::Criterion) {
-    let ksub94 = empfindung::cie94::KSubParams::graphic();
+    let ksub94 = empfindung::cie94::Params::graphic();
     let colours = generate_colours(1_000);
     bench_func(c, &colours, "cie76", empfindung::cie76::diff);
     bench_func(c, &colours, "cie94", |a, b| {

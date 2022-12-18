@@ -1,5 +1,25 @@
 # Changelog
 
+## Upcoming
+
+- Rename `KSubParams` structs to just `Params`.  This affects `cie00`
+  and `cie94` modules.  The old names are still available as
+  deprecated aliases.
+
+## 0.2.6 (2022-12-14)
+
+- Add support for `rgb::alt::BGR` and `rgb::alt::Gray` types.  The
+  latter especially has optimised conversion to L\*a\*b\* code.  If
+  the user knows they operate on grayscale it’s faster to use that
+  type.
+- Remove support for `rgb::RGBA` type.  It’s not obvious how alpha
+  should be treated when calculating colour difference so the crate
+  no longer makes that decision.
+
+## 0.2.5 (2022-12-13)
+
+- Introduce slight optimisation to CMC calculation.
+
 ## 0.2.4 (2021-11-28)
 
 - Add support for `rgb` crate and deprecate `diff_rgb` functions in

@@ -26,7 +26,7 @@
 //! parameters which indicate what effect difference in lightness, chroma and
 //! hue have on the computed distance.  The module provides [`diff`] function
 //! which uses default parameters as well as [`diff_with_params`] which accepts
-//! [`KSubParams`] argument to customise the coefficients.
+//! [`Params`] argument to customise the coefficients.
 
 /// Returns the CIEDE2000 colour difference between two L\*a\*b\* colours.
 ///
@@ -71,7 +71,7 @@ approx::assert_abs_diff_eq!(58.90164, delta_e, epsilon = 0.001);
 )]
 /// ```
 pub fn diff(color_1: impl crate::ToLab, color_2: impl crate::ToLab) -> f32 {
-    diff_with_params(color_1, color_2, KSubParams::default())
+    diff_with_params(color_1, color_2, Params::default())
 }
 
 /// Returns the CIEDE2000 colour difference between two sRGB colours.
@@ -103,16 +103,18 @@ pub fn diff_rgb(color_1: &[u8; 3], color_2: &[u8; 3]) -> f32 {
 /// result).
 ///
 /// To construct the object, either create it directly by providing your own
-/// choice of parameters, or use [`KSubParams::default`] or
-/// [`KSubParams::yang2012`] methods.  The former returns object with all
-/// parameters equal one while the latter returns parameters as devised by Yang
-/// et al.
+/// choice of parameters, or use [`Params::default`] or [`Params::yang2012`]
+/// methods.  The former returns object with all parameters equal one while the
+/// latter returns parameters as devised by Yang et al.
 #[derive(Clone, Copy, PartialEq, PartialOrd, Debug)]
-pub struct KSubParams {
+pub struct Params {
     pub l: f32,
     pub c: f32,
     pub h: f32,
 }
+
+#[deprecated(note = "Use Params name instead")]
+pub type KSubParams = Params;
 
 /// Returns the CIEDE2000 colour difference between two L\*a\*b\* colours using
 /// custom `k` parameters.
@@ -138,14 +140,14 @@ let colour_2 = (54.528, 42.416, 54.497);
 )]
 ///
 /// let delta_e = cie00::diff_with_params(
-///     colour_1, colour_2, cie00::KSubParams::yang2012());
+///     colour_1, colour_2, cie00::Params::yang2012());
 /// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(23.524858, delta_e, epsilon = 0.001);
 /// ```
 pub fn diff_with_params(
     color_1: impl crate::ToLab,
     color_2: impl crate::ToLab,
-    ksub: KSubParams,
+    ksub: Params,
 ) -> f32 {
     diff_impl(color_1.to_lab(), color_2.to_lab(), ksub)
 }
@@ -153,7 +155,7 @@ pub fn diff_with_params(
 fn diff_impl(
     color_1: (f32, f32, f32),
     color_2: (f32, f32, f32),
-    ksub: KSubParams,
+    ksub: Params,
 ) -> f32 {
     let l_bar = (color_1.0 + color_2.0) * 0.5;
     let delta_l = color_2.0 - color_1.0;
@@ -215,7 +217,7 @@ fn diff_impl(
 /// let colour_2 = [76, 187, 234];
 ///
 /// let delta_e = cie00::diff_rgb_with_params(
-///     &colour_1, &colour_2, cie00::KSubParams::yang2012());
+///     &colour_1, &colour_2, cie00::Params::yang2012());
 /// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(26.88325, delta_e, epsilon = 0.001);
 /// ```
@@ -224,7 +226,7 @@ fn diff_impl(
 pub fn diff_rgb_with_params(
     color_1: &[u8; 3],
     color_2: &[u8; 3],
-    ksub: KSubParams,
+    ksub: Params,
 ) -> f32 {
     diff_with_params(
         lab::Lab::from_rgb(color_1),
@@ -268,7 +270,7 @@ let colour_2 = (54.528, 42.416, 54.497);
     /// ```
     #[deprecated(note = "Use cie00::diff() instead")]
     pub fn new(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
-        diff_with_params(color_1, color_2, KSubParams::default())
+        diff_with_params(color_1, color_2, Params::default())
     }
 
     /// Returns the colour difference between two RGB colours.
@@ -291,7 +293,7 @@ let colour_2 = (54.528, 42.416, 54.497);
     }
 }
 
-impl Default for KSubParams {
+impl Default for Params {
     fn default() -> Self {
         Self {
             l: 1.0,
@@ -301,7 +303,7 @@ impl Default for KSubParams {
     }
 }
 
-impl KSubParams {
+impl Params {
     /// Returns parameters as determined in (Yang, 2012).
     ///
     /// See Yang Yang, Jun Ming, Nenghai Yu, ‘Color Image Quality Assessment
@@ -311,7 +313,7 @@ impl KSubParams {
     /// Note that inclusion of this function does not imply endorsement of those
     /// values.  Colorimetry is hard and it’s up to the user to determine
     /// correct values to use.  This function is here just for reference.  If in
-    /// doubt use `KSubParams::default()` which is what [`diff`] function uses.
+    /// doubt use `Params::default()` which is what [`diff`] function uses.
     pub fn yang2012() -> Self {
         Self {
             l: 0.65,
@@ -379,7 +381,7 @@ mod tests {
 
     #[test]
     fn test_zero_with_params() {
-        let ksub = super::KSubParams::yang2012();
+        let ksub = super::Params::yang2012();
         crate::testutil::do_test_zero(|a, b| {
             super::diff_with_params(a, b, ksub)
         });
@@ -392,7 +394,7 @@ mod tests {
 
     #[test]
     fn test_symmetric_with_params() {
-        let ksub = super::KSubParams::yang2012();
+        let ksub = super::Params::yang2012();
         crate::testutil::do_test_symmetric(|a, b| {
             super::diff_with_params(a, b, ksub)
         });

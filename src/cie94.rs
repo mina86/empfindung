@@ -24,8 +24,8 @@
 //! The CIE94 (ΔE₉₄) is a quasimetric which can be parameterised with three
 //! parameters which indicate what effect difference in lightness, chroma and
 //! hue have on the computed distance.  The module provides [`diff`] function
-//! which requires those parameters to be specified as a [`KSubParams`] argument
-//! to customise the coefficients.
+//! which requires those parameters to be specified as a [`Params`] argument to
+//! customise the coefficients.
 //!
 //! Note that the distance is not symmetrical, i.e. in general case `diff(a, b,
 //! ksub) != diff(b, a, ksub)`.  Prefer [`crate::cie00`] module if you needa
@@ -36,29 +36,32 @@
 /// will have on the calculated distance.
 ///
 /// To construct the object, either create it directly by providing your own
-/// choice of parameters, or use [`KSubParams::graphic`] or
-/// [`KSubParams::textiles`] methods which use parameters defined for graphic
-/// arts and textiles respectively.  The default values, i.e. what
-/// [`KSubParams::default`] returns, are ones used for graphic arts since the
-/// assumption is that the crate is used mostly for computer graphics.
+/// choice of parameters, or use [`Params::graphic`] or [`Params::textiles`]
+/// methods which use parameters defined for graphic arts and textiles
+/// respectively.  The default values, i.e. what [`Params::default`] returns,
+/// are ones used for graphic arts since the assumption is that the crate is
+/// used mostly for computer graphics.
 #[derive(Clone, Copy, PartialEq, PartialOrd, Debug)]
-pub struct KSubParams {
+pub struct Params {
     /// The k_L parameter.
     pub l: f32,
     /// The K_1 parameter.  (Called `c` because `1` is not a valid identifier
     /// and because the parameter affects chroma difference).
     pub c: f32,
-    /// The K_2 parameter.  (Called `h` because `1` is not a valid identifier
+    /// The K_2 parameter.  (Called `h` because `2` is not a valid identifier
     /// and because the parameter affects hue difference).
     pub h: f32,
 }
 
-impl Default for KSubParams {
+#[deprecated(note = "Use Params name instead")]
+pub type KSubParams = Params;
+
+impl Default for Params {
     /// Returns parameters weighted for graphic arts.
     fn default() -> Self { Self::graphic() }
 }
 
-impl KSubParams {
+impl Params {
     /// Returns parameters weighted for graphic arts.
     pub fn graphic() -> Self {
         Self {
@@ -82,8 +85,8 @@ impl KSubParams {
 /// Returns the CIE94 colour difference between two L\*a\*b\* colours using
 /// specified `k` parameters.
 ///
-/// Use [`KSubParams::graphic()`] or [`KSubParams::textiles()`] to construct
-/// parameters depending on the application.
+/// Use [`Params::graphic()`] or [`Params::textiles()`] to construct parameters
+/// depending on the application.
 ///
 /// ### Example
 ///
@@ -105,8 +108,7 @@ let colour = (54.528, 42.416, 54.497);
 "
 )]
 ///
-/// let delta_e = cie94::diff(
-///     reference, colour, cie94::KSubParams::graphic());
+/// let delta_e = cie94::diff(reference, colour, cie94::Params::graphic());
 /// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(19.482761, delta_e, epsilon = 0.001);
 #[cfg_attr(
@@ -117,7 +119,7 @@ let reference = rgb::RGB::<u8>::new(234, 76, 76);
 let colour = rgb::RGB::<u8>::new(76, 187, 234);
 
 let delta_e = cie94::diff(
-    &reference, &colour, cie94::KSubParams::graphic());
+    &reference, &colour, cie94::Params::graphic());
 println!("The colour difference is: {}", delta_e);
 approx::assert_abs_diff_eq!(50.87644, delta_e, epsilon = 0.001);
 "#
@@ -126,7 +128,7 @@ approx::assert_abs_diff_eq!(50.87644, delta_e, epsilon = 0.001);
 pub fn diff(
     reference: impl crate::ToLab,
     colour: impl crate::ToLab,
-    ksub: KSubParams,
+    ksub: Params,
 ) -> f32 {
     diff_impl(reference.to_lab(), colour.to_lab(), ksub)
 }
@@ -134,7 +136,7 @@ pub fn diff(
 fn diff_impl(
     reference: (f32, f32, f32),
     colour: (f32, f32, f32),
-    ksub: KSubParams,
+    ksub: Params,
 ) -> f32 {
     let delta_l = reference.0 - colour.0;
     let delta_a = reference.1 - colour.1;
@@ -154,8 +156,8 @@ fn diff_impl(
 /// Returns the CIE94 colour difference between two sRGB colours using custom
 /// `k` parameters.
 ///
-/// Use [`KSubParams::graphic()`] or [`KSubParams::textiles()`] to construct
-/// parameters depending on the application.
+/// Use [`Params::graphic()`] or [`Params::textiles()`] to construct parameters
+/// depending on the application.
 ///
 /// ### Example
 ///
@@ -166,17 +168,13 @@ fn diff_impl(
 /// let colour = [76, 187, 234];
 ///
 /// let delta_e = cie94::diff_rgb(
-///     &reference, &colour, cie94::KSubParams::graphic());
+///     &reference, &colour, cie94::Params::graphic());
 /// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(50.87644, delta_e, epsilon = 0.001);
 /// ```
 #[cfg(feature = "lab")]
 #[deprecated(note = "Use cie94::diff() with rgb::RGB8 argument")]
-pub fn diff_rgb(
-    reference: &[u8; 3],
-    colour: &[u8; 3],
-    ksub: KSubParams,
-) -> f32 {
+pub fn diff_rgb(reference: &[u8; 3], colour: &[u8; 3], ksub: Params) -> f32 {
     diff(
         lab::Lab::from_rgb(reference),
         lab::Lab::from_rgb(colour),
@@ -189,13 +187,13 @@ pub fn diff_rgb(
 mod tests {
     #[test]
     fn test_zero_graphic() {
-        let ksub = super::KSubParams::graphic();
+        let ksub = super::Params::graphic();
         crate::testutil::do_test_zero(|a, b| super::diff(a, b, ksub))
     }
 
     #[test]
     fn test_zero_textiles() {
-        let ksub = super::KSubParams::textiles();
+        let ksub = super::Params::textiles();
         crate::testutil::do_test_zero(|a, b| super::diff(a, b, ksub))
     }
 
@@ -239,7 +237,7 @@ mod tests {
 
     #[test]
     fn test_difference() {
-        let diff = |a, b| super::diff(a, b, super::KSubParams::default());
+        let diff = |a, b| super::diff(a, b, super::Params::default());
         crate::testutil::do_test_difference(&TESTS, diff);
     }
 }
