@@ -27,7 +27,7 @@
 
 /// Returns the CIE76 colour difference between two L\*a\*b\* colours.
 ///
-/// ### Example
+/// ## Example
 ///
 /// ```
 /// use empfindung::cie76;
@@ -48,7 +48,6 @@ let colour_2 = (54.528, 42.416, 54.497);
 )]
 ///
 /// let delta_e = cie76::diff(colour_1, colour_2);
-/// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(28.601656, delta_e, epsilon = 0.001);
 #[cfg_attr(
     all(feature = "lab", feature = "rgb"),
@@ -58,7 +57,6 @@ let colour_1 = rgb::RGB::<u8>::new(234, 76, 76);
 let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
 
 let delta_e = cie76::diff(colour_1, colour_2);
-println!("The colour difference is: {}", delta_e);
 approx::assert_abs_diff_eq!(104.05857, delta_e, epsilon = 0.001);
 "#
 )]
@@ -74,7 +72,7 @@ pub fn diff(colour_1: impl crate::ToLab, colour_2: impl crate::ToLab) -> f32 {
 
 /// Returns the CIE76 colour difference between two sRGB colours.
 ///
-/// ### Example
+/// ## Example
 ///
 /// ```
 /// use empfindung::cie76;
@@ -83,7 +81,6 @@ pub fn diff(colour_1: impl crate::ToLab, colour_2: impl crate::ToLab) -> f32 {
 /// let colour_2 = [76, 187, 234];
 ///
 /// let delta_e = cie76::diff_rgb(&colour_1, &colour_2);
-/// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(104.05857, delta_e, epsilon = 0.001);
 /// ```
 #[cfg(feature = "lab")]

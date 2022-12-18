@@ -51,14 +51,12 @@ let colour_2 = (54.528, 42.416, 54.497);
 )]
 //!
 //! let delta_e = cie00::diff(colour_1, colour_2);
-//! println!("The CIEDE2000 colour difference is: {}", delta_e);
 //! approx::assert_abs_diff_eq!(20.553642, delta_e, epsilon = 0.001);
 //!
 //! let colour_1 = (38.972, 58.991, 37.138);
 //! let colour_2 = (54.528, 42.416, 54.497);
 //!
 //! let delta_e = cie76::diff(colour_1, colour_2);
-//! println!("The Euclidean distance is: {}", delta_e);
 //! approx::assert_abs_diff_eq!(28.601656, delta_e, epsilon = 0.001);
 #![cfg_attr(
     all(feature = "lab", feature = "rgb"),
@@ -67,7 +65,6 @@ let colour_2 = (54.528, 42.416, 54.497);
 let colour_1 = rgb::RGB::<u8>::new(234, 76, 76);
 let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
 let delta_e = cie00::diff(colour_1, colour_2);
-println!("The CIEDE200 colour difference is: {}", delta_e);
 approx::assert_abs_diff_eq!(58.90164, delta_e, epsilon = 0.001);
 "#
 )]

@@ -88,7 +88,7 @@ impl Params {
 /// Use [`Params::graphic()`] or [`Params::textiles()`] to construct parameters
 /// depending on the application.
 ///
-/// ### Example
+/// ## Example
 ///
 /// ```
 /// use empfindung::cie94;
@@ -109,7 +109,6 @@ let colour = (54.528, 42.416, 54.497);
 )]
 ///
 /// let delta_e = cie94::diff(reference, colour, cie94::Params::graphic());
-/// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(19.482761, delta_e, epsilon = 0.001);
 #[cfg_attr(
     all(feature = "lab", feature = "rgb"),
@@ -120,7 +119,6 @@ let colour = rgb::RGB::<u8>::new(76, 187, 234);
 
 let delta_e = cie94::diff(
     &reference, &colour, cie94::Params::graphic());
-println!("The colour difference is: {}", delta_e);
 approx::assert_abs_diff_eq!(50.87644, delta_e, epsilon = 0.001);
 "#
 )]
@@ -159,7 +157,7 @@ fn diff_impl(
 /// Use [`Params::graphic()`] or [`Params::textiles()`] to construct parameters
 /// depending on the application.
 ///
-/// ### Example
+/// ## Example
 ///
 /// ```
 /// use empfindung::cie94;
@@ -169,7 +167,6 @@ fn diff_impl(
 ///
 /// let delta_e = cie94::diff_rgb(
 ///     &reference, &colour, cie94::Params::graphic());
-/// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(50.87644, delta_e, epsilon = 0.001);
 /// ```
 #[cfg(feature = "lab")]

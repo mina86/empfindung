@@ -30,7 +30,7 @@
 
 /// Returns the CIEDE2000 colour difference between two L\*a\*b\* colours.
 ///
-/// ### Example
+/// ## Example
 ///
 /// ```
 /// use empfindung::cie00;
@@ -51,7 +51,6 @@ let colour_2 = (54.528, 42.416, 54.497);
 )]
 ///
 /// let delta_e = cie00::diff(colour_1, colour_2);
-/// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(20.553642, delta_e, epsilon = 0.001);
 #[cfg_attr(
     all(feature = "lab", feature = "rgb"),
@@ -60,12 +59,10 @@ let colour_2 = (54.528, 42.416, 54.497);
 let color_1 = rgb::RGB { r: 234u8, g: 76, b: 76 };
 let color_2 = rgb::alt::BGR { r: 76u8, g: 187, b: 234 };
 let delta_e = cie00::diff(color_1, color_2);
-println!("The color difference is: {}", delta_e);
 approx::assert_abs_diff_eq!(58.90164, delta_e, epsilon = 0.001);
 
 let grey = rgb::alt::Gray(128u8);
 let delta_e = cie00::diff(color_1, color_2);
-println!("The color difference is: {}", delta_e);
 approx::assert_abs_diff_eq!(58.90164, delta_e, epsilon = 0.001);
 "#
 )]
@@ -76,7 +73,7 @@ pub fn diff(color_1: impl crate::ToLab, color_2: impl crate::ToLab) -> f32 {
 
 /// Returns the CIEDE2000 colour difference between two sRGB colours.
 ///
-/// ### Example
+/// ## Example
 ///
 /// ```
 /// use empfindung::cie00;
@@ -85,7 +82,6 @@ pub fn diff(color_1: impl crate::ToLab, color_2: impl crate::ToLab) -> f32 {
 /// let colour_2 = [76, 187, 234];
 ///
 /// let delta_e = cie00::diff_rgb(&colour_1, &colour_2);
-/// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(58.90164, delta_e, epsilon = 0.001);
 /// ```
 #[cfg(feature = "lab")]
@@ -119,7 +115,7 @@ pub type KSubParams = Params;
 /// Returns the CIEDE2000 colour difference between two L\*a\*b\* colours using
 /// custom `k` parameters.
 ///
-/// ### Example
+/// ## Example
 ///
 /// ```
 /// use empfindung::cie00;
@@ -141,7 +137,6 @@ let colour_2 = (54.528, 42.416, 54.497);
 ///
 /// let delta_e = cie00::diff_with_params(
 ///     colour_1, colour_2, cie00::Params::yang2012());
-/// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(23.524858, delta_e, epsilon = 0.001);
 /// ```
 pub fn diff_with_params(
@@ -208,7 +203,7 @@ fn diff_impl(
 /// Returns the CIEDE2000 colour difference between two sRGB colours using
 /// custom `k` parameters.
 ///
-/// ### Example
+/// ## Example
 ///
 /// ```
 /// use empfindung::cie00;
@@ -218,7 +213,6 @@ fn diff_impl(
 ///
 /// let delta_e = cie00::diff_rgb_with_params(
 ///     &colour_1, &colour_2, cie00::Params::yang2012());
-/// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(26.88325, delta_e, epsilon = 0.001);
 /// ```
 #[cfg(feature = "lab")]
@@ -244,7 +238,7 @@ pub struct DE2000;
 impl DE2000 {
     /// Returns the colour difference between two `Lab` colours.
     ///
-    /// ### Example
+    /// ## Example
     ///
     /// ```
     /// use empfindung::DE2000;
@@ -265,7 +259,6 @@ let colour_2 = (54.528, 42.416, 54.497);
     )]
     ///
     /// let delta_e = DE2000::new(colour_1, colour_2);
-    /// println!("The colour difference is: {}", delta_e);
     /// approx::assert_abs_diff_eq!(20.553642, delta_e, epsilon = 0.001);
     /// ```
     #[deprecated(note = "Use cie00::diff() instead")]
@@ -275,7 +268,7 @@ let colour_2 = (54.528, 42.416, 54.497);
 
     /// Returns the colour difference between two RGB colours.
     ///
-    /// ### Example
+    /// ## Example
     ///
     /// ```
     /// use empfindung::DE2000;
@@ -284,7 +277,6 @@ let colour_2 = (54.528, 42.416, 54.497);
     /// let colour_2 = [76, 187, 234];
     ///
     /// let delta_e = DE2000::from_rgb(&colour_1, &colour_2);
-    /// println!("The colour difference is: {}", delta_e);
     /// approx::assert_abs_diff_eq!(58.90164, delta_e, epsilon = 0.001);
     /// ```
     #[deprecated(note = "Use cie00::diff_rgb() instead")]

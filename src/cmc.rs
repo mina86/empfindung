@@ -31,7 +31,7 @@
 /// Returns the CMC l:c colour difference between two L\*a\*b\* colours using
 /// specified `l` and `c` parameters.
 ///
-/// ### Example
+/// ## Example
 ///
 /// ```
 /// use empfindung::cmc;
@@ -52,11 +52,9 @@ let colour_2 = (54.528, 42.416, 54.497);
 )]
 ///
 /// let delta_e = cmc::diff(colour_1, colour_2, (1.0, 1.0));
-/// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(22.751015, delta_e, epsilon = 0.001);
 ///
 /// let delta_e = cmc::diff(colour_1, colour_2, (2.0, 1.0));
-/// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(17.743946, delta_e, epsilon = 0.001);
 #[cfg_attr(
     all(feature = "lab", feature = "rgb"),
@@ -66,11 +64,9 @@ let colour_1 = rgb::RGB::<u8>::new(234, 76, 76);
 let colour_2 = rgb::RGB::<u8>::new(76, 187, 234);
 
 let delta_e = cmc::diff(&colour_1, &colour_2, (1.0, 1.0));
-println!("The colour difference is: {}", delta_e);
 approx::assert_abs_diff_eq!(64.49067, delta_e, epsilon = 0.001);
 
 let delta_e = cmc::diff(&colour_1, &colour_2, (2.0, 1.0));
-println!("The colour difference is: {}", delta_e);
 approx::assert_abs_diff_eq!(63.303917, delta_e, epsilon = 0.001);
 "#
 )]
@@ -119,7 +115,7 @@ fn diff_impl(
 /// Returns the CMC l:c colour difference between two sRGB colours using
 /// specified `l` and `c` parameters.
 ///
-/// ### Example
+/// ## Example
 ///
 /// ```
 /// use empfindung::cmc;
@@ -128,11 +124,9 @@ fn diff_impl(
 /// let colour_2 = [76, 187, 234];
 ///
 /// let delta_e = cmc::diff_rgb(&colour_1, &colour_2, (1.0, 1.0));
-/// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(64.49067, delta_e, epsilon = 0.001);
 ///
 /// let delta_e = cmc::diff_rgb(&colour_1, &colour_2, (2.0, 1.0));
-/// println!("The colour difference is: {}", delta_e);
 /// approx::assert_abs_diff_eq!(63.303917, delta_e, epsilon = 0.001);
 /// ```
 #[cfg(feature = "lab")]
