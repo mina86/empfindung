@@ -262,6 +262,7 @@ let colour_2 = (54.528, 42.416, 54.497);
     /// approx::assert_abs_diff_eq!(20.553642, delta_e, epsilon = 0.001);
     /// ```
     #[deprecated(note = "Use cie00::diff() instead")]
+    #[allow(clippy::new_ret_no_self)]
     pub fn new(color_1: lab::Lab, color_2: lab::Lab) -> f32 {
         diff_with_params(color_1, color_2, Params::default())
     }

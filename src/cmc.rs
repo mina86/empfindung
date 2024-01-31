@@ -155,7 +155,7 @@ fn get_t(a: f32, b: f32) -> f32 {
 
     let h = b.atan2(a);
     let ft = |m: f32, d: f32| (m * (h + d).cos()).abs();
-    if START <= h && h <= END {
+    if (START..=END).contains(&h) {
         // 168 / 360 = 7 / 15
         0.56 + ft(0.2, (TAU * 7.0 / 15.0) as f32)
     } else {
