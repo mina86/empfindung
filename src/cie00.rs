@@ -158,7 +158,6 @@ fn diff_impl(
     let c1 = super::math::hypot(color_1.1, color_1.2);
     let c2 = super::math::hypot(color_2.1, color_2.2);
 
-    const TWENTY_FIVE_TO_SEVENTH: f32 = 6103515625f32;
     let tmp = ((c1 + c2) * 0.5).powi(7);
     let tmp = 1.5 - (tmp / (tmp + TWENTY_FIVE_TO_SEVENTH)).sqrt() * 0.5;
     let a_prime_1 = color_1.1 * tmp;
@@ -346,7 +345,7 @@ fn get_delta_h_prime(c1: f32, c2: f32, h_prime_1: f32, h_prime_2: f32) -> f32 {
 fn get_upcase_t(upcase_h_prime_bar: f32) -> f32 {
     const THIRTY_DEG_IN_RAD: f32 = (TAU_64 / 12.0) as f32;
     const SIX_DEG_IN_RAD: f32 = (TAU_64 / 60.0) as f32;
-    const SIXTY_THREE_DEG_IN_RAD: f32 = (TAU_64 * 0.175) as f32;
+    const SIXTY_THREE_DEG_IN_RAD: f32 = (TAU_64 * 7.0 / 40.0) as f32;
 
     1.0 - 0.17 * (      upcase_h_prime_bar - THIRTY_DEG_IN_RAD     ).cos()
         + 0.24 * (2.0 * upcase_h_prime_bar                         ).cos()
@@ -355,13 +354,13 @@ fn get_upcase_t(upcase_h_prime_bar: f32) -> f32 {
 }
 
 fn get_r_sub_t(c_prime_bar: f32, upcase_h_prime_bar: f32) -> f32 {
-    const TWENTY_FIVE_TO_SEVENTH: f32 = 6103515625f32;
     let c7 = c_prime_bar.powi(7);
     let h = upcase_h_prime_bar * (14.4 / TAU_64) as f32 - 11.0;
     -2.0 * (c7 / (c7 + TWENTY_FIVE_TO_SEVENTH)).sqrt() *
         ((-h.powi(2)).exp() * (TAU_64 / 6.0) as f32).sin()
 }
 
+const TWENTY_FIVE_TO_SEVENTH: f32 = 6103515625f32;
 const TAU_32: f32 = std::f32::consts::TAU;
 const PI_32: f32 = std::f32::consts::PI;
 const TAU_64: f64 = std::f64::consts::TAU;
