@@ -87,9 +87,9 @@ fn diff_impl(
     let delta_l = reference.0 - colour.0;
     let delta_a = reference.1 - colour.1;
     let delta_b = reference.2 - colour.2;
-    let c_1_squared = super::math::hypot_squared(reference.1, reference.2);
-    let c_1 = c_1_squared.sqrt();
-    let c_2 = super::math::hypot(colour.1, colour.2);
+
+    let c_1 = reference.1.hypot(reference.2);
+    let c_2 = colour.1.hypot(colour.2);
     let delta_c = c_1 - c_2;
     let delta_h = (delta_a.powi(2) + delta_b.powi(2) - delta_c.powi(2)).sqrt();
 
@@ -101,7 +101,7 @@ fn diff_impl(
     };
     let s_c = ((0.0638 * c_1) / (1.0 + (0.0131 * c_1))) + 0.638;
 
-    let tmp = c_1_squared * c_1_squared;
+    let tmp = c_1.powi(4);
     let f = (tmp / (tmp + 1900.0)).sqrt();
     let t = get_t(reference.1, reference.2);
     let s_h = s_c * (f * t + 1.0 - f);
@@ -166,12 +166,18 @@ fn get_t(a: f32, b: f32) -> f32 {
 
 #[cfg(test)]
 mod tests {
-    #[test]
-    fn test_zero() {
-        crate::testutil::do_test_zero(|a, b| super::diff(a, b, (1.0, 1.0)));
-        crate::testutil::do_test_zero(|a, b| super::diff(a, b, (2.0, 1.0)));
-        crate::testutil::do_test_zero(|a, b| super::diff(a, b, (1.0, 2.0)));
+    fn do_test_zero(l: f32, c: f32) {
+        crate::testutil::do_test_zero(|a, b| super::diff(a, b, (l, c)))
     }
+
+    #[test]
+    fn test_zero_11() { do_test_zero(1.0, 1.0); }
+
+    #[test]
+    fn test_zero_21() { do_test_zero(2.0, 1.0); }
+
+    #[test]
+    fn test_zero_12() { do_test_zero(1.0, 2.0); }
 
     #[rustfmt::skip]
     static TESTS: [(f32, (f32, f32, f32), (f32, f32, f32)); 34] = [

@@ -106,10 +106,5 @@ impl<T: ToLab> ToLab for &T {
 
 mod to_lab_impls;
 
-pub(crate) mod math {
-    pub fn hypot(x: f32, y: f32) -> f32 { (x * x + y * y).sqrt() }
-    pub fn hypot_squared(x: f32, y: f32) -> f32 { x * x + y * y }
-}
-
 #[cfg(test)]
 pub(crate) mod testutil;

@@ -139,8 +139,8 @@ fn diff_impl(
     let delta_l = reference.0 - colour.0;
     let delta_a = reference.1 - colour.1;
     let delta_b = reference.2 - colour.2;
-    let c_1 = super::math::hypot(reference.1, reference.2);
-    let c_2 = super::math::hypot(colour.1, colour.2);
+    let c_1 = reference.1.hypot(reference.2);
+    let c_2 = colour.1.hypot(colour.2);
     let delta_c = c_1 - c_2;
     let delta_h = (delta_a.powi(2) + delta_b.powi(2) - delta_c.powi(2)).sqrt();
 

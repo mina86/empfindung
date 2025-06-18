@@ -155,16 +155,16 @@ fn diff_impl(
     let l_bar = (color_1.0 + color_2.0) * 0.5;
     let delta_l = color_2.0 - color_1.0;
 
-    let c1 = super::math::hypot(color_1.1, color_1.2);
-    let c2 = super::math::hypot(color_2.1, color_2.2);
+    let c1 = color_1.1.hypot(color_1.2);
+    let c2 = color_2.1.hypot(color_2.2);
 
     let tmp = ((c1 + c2) * 0.5).powi(7);
     let tmp = 1.5 - (tmp / (tmp + TWENTY_FIVE_TO_SEVENTH)).sqrt() * 0.5;
     let a_prime_1 = color_1.1 * tmp;
     let a_prime_2 = color_2.1 * tmp;
 
-    let c_prime_1 = super::math::hypot(a_prime_1, color_1.2);
-    let c_prime_2 = super::math::hypot(a_prime_2, color_2.2);
+    let c_prime_1 = a_prime_1.hypot(color_1.2);
+    let c_prime_2 = a_prime_2.hypot(color_2.2);
     let c_prime_bar = (c_prime_1 + c_prime_2) * 0.5;
     let delta_c_prime = c_prime_2 - c_prime_1;
 
