@@ -100,11 +100,12 @@ fn lab_from_grey(grey: u8) -> (f32, f32, f32) {
 #[cfg(feature = "rgb")]
 #[test]
 fn test_lab_from_grey() {
+    const EPSILON: f32 = crate::testutil::EPSILON / 100.0;
     let errors = (0..=255)
         .filter_map(|grey| {
             let want = lab::Lab::from_rgb(&[grey, grey, grey]).l;
             let got = lab_from_grey(grey).0;
-            if approx::abs_diff_eq!(want, got, epsilon = 0.00001) {
+            if approx::abs_diff_eq!(want, got, epsilon = EPSILON) {
                 None
             } else {
                 Some((grey, want, got))
